@@ -6,33 +6,37 @@
  * (CSS cannot import from TS; conventional mirroring is the simplest
  * reliable pattern for a Tailwind v4 CSS-first config.)
  *
- * Consume from components when runtime access to a value is genuinely needed:
- *   import { palette } from "@/tokens/colours";
- *   style={{ color: palette.clay.DEFAULT }}
- *
- * In most cases, prefer Tailwind utilities (bg-clay, text-ink, etc.).
+ * Warm palette: every neutral leans toward paper and earth, not slate.
+ * Four anchor values for theme-aware fg/bg:
+ *   ink   — dark-mode bg (warm ink-black)
+ *   char  — light-mode fg (warm near-black)
+ *   cream — dark-mode fg (warm cream)
+ *   paper — light-mode bg (warm cream-white)
+ * The grey scale is tinted toward sand, not blue.
  */
 
 export const palette = {
-  ink: "#0a0a0a",
-  paper: "#fafaf5",
+  ink: "#0D0A08",
+  char: "#1A1512",
+  cream: "#EDE5D8",
+  paper: "#F5EFE6",
 
   clay: {
-    DEFAULT: "#b8604a",
-    hover: "#c96e55",
+    DEFAULT: "#B8604A",
+    hover: "#C96E55",
   },
 
   grey: {
-    50: "#f5f4ef",
-    100: "#e8e6df",
-    200: "#d4d1c7",
-    300: "#b5b0a3",
-    400: "#8a867a",
-    500: "#6b685e",
-    600: "#4a4843",
-    700: "#2e2d2a",
-    800: "#1a1918",
-    900: "#0f0e0d",
+    50: "#F0ECE3",
+    100: "#E3DCD0",
+    200: "#CCC4B5",
+    300: "#B0A895",
+    400: "#857F6E",
+    500: "#615B4E",
+    600: "#434030",
+    700: "#2A2822",
+    800: "#1A1816",
+    900: "#12100D",
   },
 } as const;
 

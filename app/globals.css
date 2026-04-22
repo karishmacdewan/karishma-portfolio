@@ -15,22 +15,24 @@
 
 @theme {
   /* Palette — mirror of tokens/colours.ts */
-  --color-ink: #0a0a0a;
-  --color-paper: #fafaf5;
+  --color-ink: #0D0A08;
+  --color-char: #1A1512;
+  --color-cream: #EDE5D8;
+  --color-paper: #F5EFE6;
 
-  --color-clay: #b8604a;
-  --color-clay-hover: #c96e55;
+  --color-clay: #B8604A;
+  --color-clay-hover: #C96E55;
 
-  --color-grey-50: #f5f4ef;
-  --color-grey-100: #e8e6df;
-  --color-grey-200: #d4d1c7;
-  --color-grey-300: #b5b0a3;
-  --color-grey-400: #8a867a;
-  --color-grey-500: #6b685e;
-  --color-grey-600: #4a4843;
-  --color-grey-700: #2e2d2a;
-  --color-grey-800: #1a1918;
-  --color-grey-900: #0f0e0d;
+  --color-grey-50: #F0ECE3;
+  --color-grey-100: #E3DCD0;
+  --color-grey-200: #CCC4B5;
+  --color-grey-300: #B0A895;
+  --color-grey-400: #857F6E;
+  --color-grey-500: #615B4E;
+  --color-grey-600: #434030;
+  --color-grey-700: #2A2822;
+  --color-grey-800: #1A1816;
+  --color-grey-900: #12100D;
 
   /* Fonts — variables are populated in app/layout.tsx via next/font */
   --font-serif: var(--font-instrument-serif), ui-serif, Georgia, "Times New Roman", serif;
@@ -93,7 +95,7 @@
 /* Dark — default (no data-theme attribute required) */
 :root {
   --background: var(--color-ink);
-  --foreground: var(--color-paper);
+  --foreground: var(--color-cream);
   --muted: var(--color-grey-400);
   --border: var(--color-grey-800);
   --surface: var(--color-grey-900);
@@ -105,7 +107,7 @@
 /* Light — opt-in via [data-theme="light"] on <html> */
 [data-theme="light"] {
   --background: var(--color-paper);
-  --foreground: var(--color-ink);
+  --foreground: var(--color-char);
   --muted: var(--color-grey-500);
   --border: var(--color-grey-200);
   --surface: var(--color-grey-50);

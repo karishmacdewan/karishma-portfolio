@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,6 +16,7 @@ const NAV = [
 export function Header() {
   const [pinned, setPinned] = useState(false);
   const pathname = usePathname();
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     const evaluate = () => {
@@ -28,7 +30,14 @@ export function Header() {
   }, []);
 
   return (
-    <header
+    <motion.header
+      initial={{ opacity: prefersReducedMotion ? 1 : 0 }}
+      animate={{ opacity: 1 }}
+      transition={{
+        duration: prefersReducedMotion ? 0 : 0.4,
+        delay: prefersReducedMotion ? 0 : 0.1,
+        ease: [0.22, 1, 0.36, 1],
+      }}
       className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-base ease-out-soft ${
         pinned
           ? "bg-background/70 backdrop-blur-md border-b border-border"
@@ -75,6 +84,6 @@ export function Header() {
           <ThemeToggle />
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }

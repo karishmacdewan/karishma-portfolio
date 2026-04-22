@@ -66,6 +66,10 @@
   --text-display--line-height: 1.05;
   --text-display--letter-spacing: -0.025em;
 
+  --text-hero: 6rem;
+  --text-hero--line-height: 1.0;
+  --text-hero--letter-spacing: -0.03em;
+
   /* Motion — small, inlined here rather than a tokens file */
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);

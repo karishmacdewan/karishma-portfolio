@@ -14,6 +14,7 @@ export const fonts = {
 } as const;
 
 export const typeScale = {
+  hero: { size: "6rem", lineHeight: 1.0, letterSpacing: "-0.03em" },
   display: { size: "4.5rem", lineHeight: 1.05, letterSpacing: "-0.025em" },
   h1: { size: "3rem", lineHeight: 1.1, letterSpacing: "-0.02em" },
   h2: { size: "2rem", lineHeight: 1.2, letterSpacing: "-0.015em" },

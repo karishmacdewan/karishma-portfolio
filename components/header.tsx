@@ -6,35 +6,31 @@ import { useEffect, useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
 
 const NAV = [
-  { href: "/work", label: "Work" },
-  { href: "/about", label: "About" },
-  { href: "/services", label: "Services" },
-  { href: "/contact", label: "Contact" },
+  { index: "01", href: "/work", label: "Work" },
+  { index: "02", href: "/about", label: "About" },
+  { index: "03", href: "/services", label: "Services" },
+  { index: "04", href: "/contact", label: "Contact" },
 ];
 
 export function Header() {
-  const [scrolled, setScrolled] = useState(false);
+  const [pinned, setPinned] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
     const evaluate = () => {
-      // Backdrop blur engages after the user has scrolled past roughly
-      // the hero — proxied as 70% of the current viewport height.
-      setScrolled(window.scrollY > window.innerHeight * 0.7);
+      setPinned(window.scrollY > 80);
     };
     evaluate();
     window.addEventListener("scroll", evaluate, { passive: true });
-    window.addEventListener("resize", evaluate);
     return () => {
       window.removeEventListener("scroll", evaluate);
-      window.removeEventListener("resize", evaluate);
     };
   }, []);
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-base ease-out-soft ${
-        scrolled
+        pinned
           ? "bg-background/70 backdrop-blur-md border-b border-border"
           : "bg-transparent border-b border-transparent"
       }`}
@@ -42,28 +38,33 @@ export function Header() {
       <div className="mx-auto max-w-6xl px-8 h-16 flex items-center justify-between">
         <Link
           href="/"
-          className="font-serif text-body-lg text-foreground hover:text-accent transition-colors duration-fast ease-out-soft"
+          aria-label="Karishma Dewan — home"
+          className="font-serif text-h3 tracking-wider text-foreground"
         >
           Karishma Dewan
         </Link>
 
-        <div className="flex items-center gap-10">
+        <div className="flex items-center gap-16">
           <nav aria-label="Primary">
-            <ul className="flex items-center gap-8">
-              {NAV.map(({ href, label }) => {
+            <ul className="flex items-baseline gap-12">
+              {NAV.map(({ index, href, label }) => {
                 const active =
                   pathname === href || pathname.startsWith(`${href}/`);
                 return (
                   <li key={href}>
-                    <Link
-                      href={href}
-                      className={`font-sans text-caption uppercase transition-colors duration-fast ease-out-soft ${
-                        active
-                          ? "text-foreground"
-                          : "text-muted hover:text-foreground"
-                      }`}
-                    >
-                      {label}
+                    <Link href={href} className="group inline">
+                      <span className="font-sans text-small text-muted">
+                        {index}&nbsp;—&nbsp;
+                      </span>
+                      <span
+                        className={`font-serif text-body-lg lowercase transition-colors duration-fast ease-out-soft ${
+                          active
+                            ? "text-foreground"
+                            : "text-muted group-hover:text-foreground"
+                        }`}
+                      >
+                        {label}
+                      </span>
                     </Link>
                   </li>
                 );

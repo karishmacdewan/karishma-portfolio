@@ -1,26 +1,119 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Design system foundation.
+ *
+ * Structure:
+ *   1. @theme        — fixed palette, fonts, type scale, motion
+ *   2. @theme inline — semantic tokens that read from :root vars
+ *   3. :root         — dark values (default)
+ *   4. [data-theme="light"] — light overrides
+ *
+ * Palette values mirror `tokens/colours.ts`.
+ * Type scale mirrors `tokens/typography.ts`.
+ */
+
+@theme {
+  /* Palette — mirror of tokens/colours.ts */
+  --color-ink: #0a0a0a;
+  --color-paper: #fafaf5;
+
+  --color-clay: #b8604a;
+  --color-clay-hover: #c96e55;
+
+  --color-grey-50: #f5f4ef;
+  --color-grey-100: #e8e6df;
+  --color-grey-200: #d4d1c7;
+  --color-grey-300: #b5b0a3;
+  --color-grey-400: #8a867a;
+  --color-grey-500: #6b685e;
+  --color-grey-600: #4a4843;
+  --color-grey-700: #2e2d2a;
+  --color-grey-800: #1a1918;
+  --color-grey-900: #0f0e0d;
+
+  /* Fonts — variables are populated in app/layout.tsx via next/font */
+  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* Type scale — mirror of tokens/typography.ts */
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.4;
+  --text-caption--letter-spacing: 0.06em;
+
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.65;
+
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.6;
+
+  --text-h3: 1.5rem;
+  --text-h3--line-height: 1.3;
+  --text-h3--letter-spacing: -0.01em;
+
+  --text-h2: 2rem;
+  --text-h2--line-height: 1.2;
+  --text-h2--letter-spacing: -0.015em;
+
+  --text-h1: 3rem;
+  --text-h1--line-height: 1.1;
+  --text-h1--letter-spacing: -0.02em;
+
+  --text-display: 4.5rem;
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.025em;
+
+  /* Motion — small, inlined here rather than a tokens file */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --duration-fast: 150ms;
+  --duration-base: 300ms;
+  --duration-slow: 600ms;
 }
 
+/* Semantic tokens — theme-aware, driven by :root vars below */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-surface: var(--surface);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Dark — default (no data-theme attribute required) */
+:root {
+  --background: var(--color-ink);
+  --foreground: var(--color-paper);
+  --muted: var(--color-grey-400);
+  --border: var(--color-grey-800);
+  --surface: var(--color-grey-900);
+  --accent: var(--color-clay);
+  --accent-hover: var(--color-clay-hover);
+  color-scheme: dark;
+}
+
+/* Light — opt-in via [data-theme="light"] on <html> */
+[data-theme="light"] {
+  --background: var(--color-paper);
+  --foreground: var(--color-ink);
+  --muted: var(--color-grey-500);
+  --border: var(--color-grey-200);
+  --surface: var(--color-grey-50);
+  --accent: var(--color-clay);
+  --accent-hover: var(--color-clay-hover);
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

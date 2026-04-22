@@ -1,39 +1,28 @@
 "use client";
 
-import { animate, motion, useMotionValue, useTransform } from "framer-motion";
+import { animate, motion, useMotionValue } from "framer-motion";
 import { useEffect, useState } from "react";
 
 const EASE_OUT_SOFT: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const HALO_EASE: [number, number, number, number] = [0.32, 0.72, 0.24, 1];
 
-// Halo: a circular gradient painted as a ring (eclipse, not sun).
-// Base radius 80vw — with the 12/22/32/70/100 stops below, this puts the
-// ring peak's outer edge at ~32% × 80vw = ~25vw from centre (a ring whose
-// visible diameter reads as ~50% of viewport width), and the outer fade
-// completes at 70% × 80vw = 56vw from centre — just past the horizontal
-// edge, so the corners of the viewport settle cleanly on background.
 const HALO_BASE = 1.0;
 const HALO_PULSE_HIGH = 1.05;
 const HALO_PULSE_LOW = 0.95;
 
-function haloGradient(scale: number): string {
-  const r = 80 * scale;
-  return [
-    `radial-gradient(circle ${r}vw at 50% 45%,`,
-    // Dark core (void) — var(--background) fills 0–12% of the radius so
-    // the hero text sits inside a quiet centre.
-    ` var(--background) 0%,`,
-    ` var(--background) 12%,`,
-    // Transition into the warm ring.
-    // Ring peak — solid accent from 22–32%.
-    ` var(--accent) 22%,`,
-    ` var(--accent) 32%,`,
-    // Fade back into background. Linear interpolation between these two
-    // stops handles the falloff.
-    ` var(--background) 70%,`,
-    ` var(--background) 100%)`,
-  ].join("");
-}
+// Gradient is static; the pulse rides on a transform: scale applied to the
+// container (see below). Using closest-side means the gradient completes
+// its fade at the container's nearest edge rather than extending into the
+// square's corners — the halo fully dissolves within its own bounds.
+const HALO_GRADIENT = [
+  `radial-gradient(circle closest-side at center,`,
+  ` var(--background) 0%,`,
+  ` var(--background) 25%,`,
+  ` var(--accent) 40%,`,
+  ` var(--accent) 55%,`,
+  ` var(--background) 85%,`,
+  ` var(--background) 100%)`,
+].join("");
 
 type IntroState = {
   skipIntro: boolean;
@@ -57,11 +46,9 @@ function readIntroState(): IntroState {
 export default function HomePage() {
   const [{ skipIntro, prefersReducedMotion }] = useState(readIntroState);
 
-  // Single scale value drives the entire gradient. 0 on SSR + first paint
-  // renders a zero-radius (invisible) halo, so the HTML is deterministic
-  // across server and client.
+  // Starts at 0 (invisible point) on SSR + first paint; the effect below
+  // either snaps to HALO_BASE or animates up to it.
   const haloScale = useMotionValue(0);
-  const haloBackgroundImage = useTransform(haloScale, haloGradient);
 
   useEffect(() => {
     if (!skipIntro && typeof window !== "undefined") {
@@ -130,20 +117,29 @@ export default function HomePage() {
 
   return (
     <section className="relative h-screen min-h-screen overflow-hidden">
-      {/* Halo — dark core surrounded by a warm accent ring, fading back
-          to background. Painted via backgroundImage on an inset-0 layer
-          so its transparent outer zone shows the body's background. */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        style={{ backgroundImage: haloBackgroundImage }}
+      {/* Halo — contained in a 55vmin square centered at (50vw, 30vh).
+          Using vmin instead of vw keeps the halo from dominating the
+          viewport on desktop landscape (where vh < vw). The outer
+          wrapper handles static positioning; the inner motion.div
+          handles the scale animation so the two transforms don't
+          fight each other. */}
+      <div
+        className="absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
         aria-hidden="true"
-      />
+      >
+        <motion.div
+          className="w-[55vmin] aspect-square"
+          style={{
+            scale: haloScale,
+            backgroundImage: HALO_GRADIENT,
+          }}
+        />
+      </div>
 
-      {/* Primary claim — vertical centre at 45vh, inside the dark core.
-          The warm ring wraps around the text like an aura. */}
+      {/* Primary claim — 65vh vertical centre, entirely below the halo. */}
       <div
         className="absolute inset-x-0 px-8 z-10"
-        style={{ top: "45vh", transform: "translateY(-50%)" }}
+        style={{ top: "65vh", transform: "translateY(-50%)" }}
       >
         <motion.h1
           variants={lineVariants}
@@ -166,16 +162,17 @@ export default function HomePage() {
         </motion.h1>
       </div>
 
-      {/* Qualifier — 68vh, past the outer fade, on clean background. */}
+      {/* Qualifier — 78vh. text-secondary (brighter than text-muted) for
+          readable mid-contrast against the dark background. */}
       <div
         className="absolute inset-x-0 px-8 z-10"
-        style={{ top: "68vh", transform: "translateY(-50%)" }}
+        style={{ top: "78vh", transform: "translateY(-50%)" }}
       >
         <motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={tx(2.8, 0.5)}
-          className="mx-auto max-w-3xl text-center font-serif text-h3 text-muted"
+          className="mx-auto max-w-3xl text-center font-serif text-h3 text-secondary"
         >
           Most AI gets built by people who only have one. I build products
           with all three — for companies that care how AI feels, not just
@@ -183,10 +180,11 @@ export default function HomePage() {
         </motion.p>
       </div>
 
-      {/* Credibility cluster — 85vh, fully on background. */}
+      {/* Credibility cluster — 90vh. Separator dots in accent, status dot
+          12px filled circle in accent. */}
       <div
         className="absolute inset-x-0 px-8 z-10 flex flex-col items-center gap-3"
-        style={{ top: "85vh", transform: "translateY(-50%)" }}
+        style={{ top: "90vh", transform: "translateY(-50%)" }}
       >
         <motion.p
           initial={{ opacity: 0 }}

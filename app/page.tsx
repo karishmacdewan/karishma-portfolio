@@ -1,6 +1,7 @@
 "use client";
 
 import { animate, motion, useMotionValue } from "framer-motion";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const EASE_OUT_SOFT: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -117,6 +118,7 @@ export default function HomePage() {
   };
 
   return (
+    <>
     <section className="relative h-screen min-h-screen overflow-hidden">
       {/* Halo — dominant, centered on the viewport, min(85vw, 80vh) so it
           stays within bounds on both landscape and portrait. Outer div
@@ -208,6 +210,97 @@ export default function HomePage() {
             <span>available for select engagements — 2026</span>
           </motion.p>
         </div>
+      </div>
+    </section>
+
+    <SelectedWork />
+    <AboutCta />
+    </>
+  );
+}
+
+const WORK = [
+  {
+    tag: "Agent",
+    year: "2025",
+    title: "A conversational companion for women's hormonal wellness.",
+    description:
+      "Interaction model, domain knowledge, and voice for a Series A wellness brand.",
+  },
+  {
+    tag: "Product",
+    year: "2025",
+    title: "Rebuilt onboarding for an AI creative suite.",
+    description:
+      "First-run strategy and shipped prototype for a generative creative tools company.",
+  },
+  {
+    tag: "Brand",
+    year: "2024",
+    title: "Positioning and voice for a Seed-stage AI launch.",
+    description:
+      "Narrative system, visual direction, and launch copy for a generative AI company.",
+  },
+];
+
+function SelectedWork() {
+  return (
+    <section className="mx-auto max-w-6xl px-8 py-32">
+      <h2 className="font-sans text-caption uppercase text-muted mb-20">
+        Selected work
+      </h2>
+      <div className="border-t border-b border-border divide-y divide-border">
+        {WORK.map((item, i) => (
+          <Link
+            key={`${item.tag}-${item.year}`}
+            href="/work"
+            className="group block py-16"
+          >
+            <div className="grid gap-y-6 gap-x-12 md:grid-cols-[10rem_1fr]">
+              <div className="flex flex-col gap-1 font-sans text-caption uppercase text-muted">
+                <span>
+                  0{i + 1} · {item.tag}
+                </span>
+                <span>{item.year}</span>
+              </div>
+              <div className="flex flex-col gap-4">
+                <h3 className="font-serif text-h1 text-foreground group-hover:text-accent transition-colors duration-fast ease-out-soft">
+                  {item.title}
+                </h3>
+                <p className="font-serif text-h3 text-secondary max-w-2xl">
+                  {item.description}
+                </p>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function AboutCta() {
+  return (
+    <section className="mx-auto max-w-6xl px-8 py-32">
+      <h2 className="font-sans text-caption uppercase text-muted mb-20">
+        About
+      </h2>
+      <div className="flex flex-col gap-8 max-w-3xl">
+        <p className="font-serif text-h2 text-foreground">
+          Strategy, product, and code — for companies where taste matters as
+          much as technology.
+        </p>
+        <p className="font-serif text-h3 text-secondary">
+          A small practice. One or two engagements at a time. AI product work,
+          agent design, and brand positioning for AI-native companies.
+        </p>
+        <Link
+          href="/contact"
+          className="inline-flex items-center gap-3 mt-8 font-sans text-body-lg text-foreground hover:text-accent transition-colors duration-fast ease-out-soft"
+        >
+          <span>Get in touch</span>
+          <span aria-hidden="true">→</span>
+        </Link>
       </div>
     </section>
   );

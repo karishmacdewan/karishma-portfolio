@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 const SOCIAL = [
   { href: "https://linkedin.com/in/karishmacdewan", label: "LinkedIn" },
   { href: "mailto:karishmadewan0@gmail.com", label: "Email" },
@@ -9,29 +11,34 @@ export function Footer() {
 
   return (
     <footer className="border-t border-border">
-      <div className="mx-auto max-w-6xl px-8 py-24 grid grid-cols-1 gap-8 md:grid-cols-3 md:items-start">
-        <p className="font-sans text-small text-muted">
+      {/* Two zones — left credit, right socials + copyright. Container
+          mirrors the header's max-w-6xl px-8 so the left zone aligns with
+          the wordmark and the right zone with the theme toggle. */}
+      <div className="mx-auto max-w-6xl px-8 py-16 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <p className="font-sans text-[13px] text-muted tracking-[0.04em]">
           Built by Karishma Dewan. Based in [city].
         </p>
 
-        <nav
-          aria-label="Social"
-          className="flex gap-6 font-sans text-small md:justify-center"
-        >
-          {SOCIAL.map(({ href, label }) => (
-            <a
-              key={label}
-              href={href}
-              className="text-muted hover:text-foreground transition-colors duration-fast ease-out-soft"
-            >
-              {label}
-            </a>
-          ))}
-        </nav>
-
-        <p className="font-sans text-small text-muted md:text-right">
-          © {year}
-        </p>
+        <div className="flex items-center gap-6 font-sans text-[13px] text-muted tracking-[0.04em]">
+          <nav aria-label="Social" className="flex items-center gap-2">
+            {SOCIAL.map(({ href, label }, i) => (
+              <Fragment key={label}>
+                {i > 0 && (
+                  <span aria-hidden="true" className="text-muted">
+                    ·
+                  </span>
+                )}
+                <a
+                  href={href}
+                  className="text-muted hover:text-foreground hover:underline underline-offset-4 decoration-1 transition-colors duration-[180ms] ease-out-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+                >
+                  {label}
+                </a>
+              </Fragment>
+            ))}
+          </nav>
+          <span>© {year}</span>
+        </div>
       </div>
     </footer>
   );

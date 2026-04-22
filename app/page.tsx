@@ -1,6 +1,6 @@
 "use client";
 
-import { animate, motion, useMotionValue } from "framer-motion";
+import { animate, motion, useMotionValue, useSpring } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -219,6 +219,15 @@ export default function HomePage() {
   );
 }
 
+/**
+ * WORK — homepage "Selected work" list.
+ *
+ * The `preview` field is a CSS background-image used as a placeholder
+ * atmospheric block for the cursor-following hover preview. Swap each
+ * one for a real case study visual when available. All three share the
+ * same visual register — radial gradients in terracotta / warm grey /
+ * dark-with-accent — so they read as a consistent set, not one-offs.
+ */
 const WORK = [
   {
     tag: "Agent",
@@ -226,6 +235,8 @@ const WORK = [
     title: "A conversational companion for women's hormonal wellness.",
     description:
       "Interaction model, domain knowledge, and voice for a Series A wellness brand.",
+    preview:
+      "radial-gradient(circle at 30% 40%, color-mix(in oklab, var(--accent) 80%, transparent), color-mix(in oklab, var(--accent) 30%, transparent) 45%, var(--color-grey-800) 85%)",
   },
   {
     tag: "Product",
@@ -233,6 +244,8 @@ const WORK = [
     title: "Rebuilt onboarding for an AI creative suite.",
     description:
       "First-run strategy and shipped prototype for a generative creative tools company.",
+    preview:
+      "radial-gradient(ellipse at 45% 55%, var(--color-grey-400), var(--color-grey-700) 55%, var(--color-grey-900) 95%)",
   },
   {
     tag: "Brand",
@@ -240,68 +253,208 @@ const WORK = [
     title: "Positioning and voice for a Seed-stage AI launch.",
     description:
       "Narrative system, visual direction, and launch copy for a generative AI company.",
+    preview:
+      "radial-gradient(circle at 70% 65%, color-mix(in oklab, var(--accent) 35%, transparent), var(--color-grey-900) 50%, var(--color-grey-900) 100%)",
   },
 ];
 
+type MotionPrefs = { reducedMotion: boolean; touchOnly: boolean };
+
+function readMotionPrefs(): MotionPrefs {
+  if (typeof window === "undefined") {
+    return { reducedMotion: false, touchOnly: false };
+  }
+  return {
+    reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    touchOnly: window.matchMedia("(hover: none)").matches,
+  };
+}
+
 function SelectedWork() {
+  const [{ reducedMotion, touchOnly }] = useState(readMotionPrefs);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  // displayIndex lingers after unhover so the preview's background doesn't
+  // reset mid-fadeout.
+  const [displayIndex, setDisplayIndex] = useState(0);
+
+  // Cursor-follow springs. Start offscreen so the preview doesn't paint
+  // a frame at (0, 0) before the first mousemove.
+  const mouseX = useMotionValue(-1000);
+  const mouseY = useMotionValue(-1000);
+  const smoothX = useSpring(mouseX, { damping: 30, stiffness: 200 });
+  const smoothY = useSpring(mouseY, { damping: 30, stiffness: 200 });
+
+  const previewEnabled = !reducedMotion && !touchOnly;
+
+  useEffect(() => {
+    if (!previewEnabled) return;
+    const onMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX + 16);
+      mouseY.set(e.clientY + 16);
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => window.removeEventListener("mousemove", onMove);
+  }, [mouseX, mouseY, previewEnabled]);
+
+  // Scroll-entrance variants: if reduced-motion, render at final state.
+  const rowInitial = reducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 };
+  const rowTransition = {
+    duration: reducedMotion ? 0 : 0.6,
+    ease: EASE_OUT_SOFT,
+  };
+  const stagger = reducedMotion ? 0 : 0.1;
+
   return (
-    <section className="mx-auto max-w-6xl px-8 py-32">
-      <h2 className="font-sans text-caption uppercase text-muted mb-20">
-        Selected work
-      </h2>
-      <div className="border-t border-b border-border divide-y divide-border">
-        {WORK.map((item, i) => (
-          <Link
-            key={`${item.tag}-${item.year}`}
-            href="/work"
-            className="group block py-16"
-          >
-            <div className="grid gap-y-6 gap-x-12 md:grid-cols-[10rem_1fr]">
-              <div className="flex flex-col gap-1 font-sans text-caption uppercase text-muted">
-                <span>
-                  0{i + 1} · {item.tag}
-                </span>
-                <span>{item.year}</span>
-              </div>
-              <div className="flex flex-col gap-4">
-                <h3 className="font-serif text-h1 text-foreground group-hover:text-accent transition-colors duration-fast ease-out-soft">
-                  {item.title}
-                </h3>
-                <p className="font-serif text-h3 text-secondary max-w-2xl">
-                  {item.description}
-                </p>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </section>
+    <>
+      <section className="mx-auto max-w-6xl px-8 py-32">
+        <motion.h2
+          initial={rowInitial}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-10%" }}
+          transition={rowTransition}
+          className="font-sans text-caption uppercase text-muted mb-20"
+        >
+          Selected work
+        </motion.h2>
+
+        <motion.div
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: stagger } },
+          }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-10%" }}
+          className="border-t border-b border-border divide-y divide-border"
+        >
+          {WORK.map((item, i) => (
+            <motion.div
+              key={`${item.tag}-${item.year}`}
+              variants={{
+                hidden: rowInitial,
+                visible: { opacity: 1, y: 0, transition: rowTransition },
+              }}
+              onMouseEnter={
+                previewEnabled
+                  ? () => {
+                      setHoveredIndex(i);
+                      setDisplayIndex(i);
+                    }
+                  : undefined
+              }
+              onMouseLeave={
+                previewEnabled ? () => setHoveredIndex(null) : undefined
+              }
+            >
+              <Link href="/work" className="group block py-16">
+                <div className="grid gap-y-6 gap-x-12 md:grid-cols-[10rem_1fr]">
+                  <div className="flex flex-col gap-1 font-sans text-caption uppercase text-muted">
+                    <span>
+                      <span className="text-accent">0{i + 1}</span> ·{" "}
+                      {item.tag}
+                    </span>
+                    <span>{item.year}</span>
+                  </div>
+                  <div className="flex flex-col gap-4">
+                    <h3 className="font-serif text-h1 text-foreground group-hover:text-accent transition-colors duration-fast ease-out-soft">
+                      {item.title}
+                    </h3>
+                    <p className="font-serif text-h3 text-secondary max-w-2xl">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </motion.div>
+      </section>
+
+      {previewEnabled && (
+        <motion.div
+          aria-hidden="true"
+          className="fixed pointer-events-none z-50 w-[280px] h-[180px] rounded-sm"
+          style={{
+            left: smoothX,
+            top: smoothY,
+            backgroundImage: WORK[displayIndex].preview,
+            boxShadow: "0 20px 60px -10px rgba(0, 0, 0, 0.5)",
+          }}
+          animate={{ opacity: hoveredIndex !== null ? 1 : 0 }}
+          transition={{ duration: 0.18, ease: EASE_OUT_SOFT }}
+        />
+      )}
+    </>
   );
 }
 
 function AboutCta() {
+  const [{ reducedMotion }] = useState(readMotionPrefs);
+
+  const initial = reducedMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 };
+  const transition = {
+    duration: reducedMotion ? 0 : 0.6,
+    ease: EASE_OUT_SOFT,
+  };
+  const stagger = reducedMotion ? 0 : 0.1;
+
   return (
     <section className="mx-auto max-w-6xl px-8 py-32">
-      <h2 className="font-sans text-caption uppercase text-muted mb-20">
+      <motion.h2
+        initial={initial}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-10%" }}
+        transition={transition}
+        className="font-sans text-caption uppercase text-muted mb-20"
+      >
         About
-      </h2>
-      <div className="flex flex-col gap-8 max-w-3xl">
-        <p className="font-serif text-h2 text-foreground">
+      </motion.h2>
+      <motion.div
+        variants={{
+          hidden: {},
+          visible: { transition: { staggerChildren: stagger } },
+        }}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-10%" }}
+        className="flex flex-col gap-8 max-w-3xl"
+      >
+        <motion.p
+          variants={{
+            hidden: initial,
+            visible: { opacity: 1, y: 0, transition },
+          }}
+          className="font-serif text-h2 text-foreground"
+        >
           Strategy, product, and code — for companies where taste matters as
           much as technology.
-        </p>
-        <p className="font-serif text-h3 text-secondary">
+        </motion.p>
+        <motion.p
+          variants={{
+            hidden: initial,
+            visible: { opacity: 1, y: 0, transition },
+          }}
+          className="font-serif text-h3 text-secondary"
+        >
           A small practice. One or two engagements at a time. AI product work,
           agent design, and brand positioning for AI-native companies.
-        </p>
-        <Link
-          href="/contact"
-          className="inline-flex items-center gap-3 mt-8 font-sans text-body-lg text-foreground hover:text-accent transition-colors duration-fast ease-out-soft"
+        </motion.p>
+        <motion.div
+          variants={{
+            hidden: initial,
+            visible: { opacity: 1, y: 0, transition },
+          }}
+          className="mt-8"
         >
-          <span>Get in touch</span>
-          <span aria-hidden="true">→</span>
-        </Link>
-      </div>
+          <Link
+            href="/contact"
+            className="inline-flex items-center gap-3 font-sans text-body-lg text-foreground hover:text-accent transition-colors duration-fast ease-out-soft"
+          >
+            <span>Get in touch</span>
+            <span aria-hidden="true">→</span>
+          </Link>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

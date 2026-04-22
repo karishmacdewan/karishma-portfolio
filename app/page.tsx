@@ -6,24 +6,32 @@ import { useEffect, useState } from "react";
 const EASE_OUT_SOFT: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const HALO_EASE: [number, number, number, number] = [0.32, 0.72, 0.24, 1];
 
-// Halo ellipse: 50vw wide, 25vh tall at base scale. Wider-than-tall so it
-// reaches the horizontal edges of the viewport (immersive halo) while
-// leaving the lower half of the hero clear for qualifier/cluster.
+// Halo: a circular gradient painted as a ring (eclipse, not sun).
+// Base radius 80vw — with the 12/22/32/70/100 stops below, this puts the
+// ring peak's outer edge at ~32% × 80vw = ~25vw from centre (a ring whose
+// visible diameter reads as ~50% of viewport width), and the outer fade
+// completes at 70% × 80vw = 56vw from centre — just past the horizontal
+// edge, so the corners of the viewport settle cleanly on background.
 const HALO_BASE = 1.0;
 const HALO_PULSE_HIGH = 1.05;
 const HALO_PULSE_LOW = 0.95;
 
 function haloGradient(scale: number): string {
-  const rx = 50 * scale;
-  const ry = 25 * scale;
+  const r = 80 * scale;
   return [
-    `radial-gradient(ellipse ${rx}vw ${ry}vh at 50% 40%,`,
-    ` var(--accent) 0%,`,
-    ` var(--accent) 35%,`,
-    ` color-mix(in oklab, var(--accent) 60%, transparent) 50%,`,
-    ` color-mix(in oklab, var(--accent) 30%, transparent) 65%,`,
-    ` color-mix(in oklab, var(--accent) 10%, transparent) 85%,`,
-    ` transparent 100%)`,
+    `radial-gradient(circle ${r}vw at 50% 45%,`,
+    // Dark core (void) — var(--background) fills 0–12% of the radius so
+    // the hero text sits inside a quiet centre.
+    ` var(--background) 0%,`,
+    ` var(--background) 12%,`,
+    // Transition into the warm ring.
+    // Ring peak — solid accent from 22–32%.
+    ` var(--accent) 22%,`,
+    ` var(--accent) 32%,`,
+    // Fade back into background. Linear interpolation between these two
+    // stops handles the falloff.
+    ` var(--background) 70%,`,
+    ` var(--background) 100%)`,
   ].join("");
 }
 
@@ -49,9 +57,9 @@ function readIntroState(): IntroState {
 export default function HomePage() {
   const [{ skipIntro, prefersReducedMotion }] = useState(readIntroState);
 
-  // A single scale value drives both ellipse radii. 0 at SSR/first paint
-  // keeps HTML deterministic across server and client; the effect below
-  // either snaps to 1.0 or animates to it.
+  // Single scale value drives the entire gradient. 0 on SSR + first paint
+  // renders a zero-radius (invisible) halo, so the HTML is deterministic
+  // across server and client.
   const haloScale = useMotionValue(0);
   const haloBackgroundImage = useTransform(haloScale, haloGradient);
 
@@ -66,9 +74,6 @@ export default function HomePage() {
 
     const startPulse = () => {
       if (prefersReducedMotion) return;
-      // base → high → base → low → base over 7s. Ease-in-out on each
-      // segment gives it the rest/expand/rest/contract/rest cadence of
-      // slow breathing.
       pulseControls = animate(
         haloScale,
         [HALO_BASE, HALO_PULSE_HIGH, HALO_BASE, HALO_PULSE_LOW, HALO_BASE],
@@ -125,21 +130,20 @@ export default function HomePage() {
 
   return (
     <section className="relative h-screen min-h-screen overflow-hidden">
-      {/* Halo — ellipse gradient, centered at (50%, 40%). Wider than tall
-          so it reaches horizontal viewport edges while leaving the lower
-          half of the hero clear. */}
+      {/* Halo — dark core surrounded by a warm accent ring, fading back
+          to background. Painted via backgroundImage on an inset-0 layer
+          so its transparent outer zone shows the body's background. */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
         style={{ backgroundImage: haloBackgroundImage }}
         aria-hidden="true"
       />
 
-      {/* Primary claim — vertical center at 55vh, top edge ~50vh enters
-          the halo's lower falloff. All centering on the outer wrapper +
-          inner block keeps it bulletproof against max-width edge cases. */}
+      {/* Primary claim — vertical centre at 45vh, inside the dark core.
+          The warm ring wraps around the text like an aura. */}
       <div
         className="absolute inset-x-0 px-8 z-10"
-        style={{ top: "55vh", transform: "translateY(-50%)" }}
+        style={{ top: "45vh", transform: "translateY(-50%)" }}
       >
         <motion.h1
           variants={lineVariants}
@@ -162,11 +166,10 @@ export default function HomePage() {
         </motion.h1>
       </div>
 
-      {/* Qualifier — 72vh, outside the ellipse's vertical reach (ellipse
-          bottom is ~65vh), so it sits on clean background. */}
+      {/* Qualifier — 68vh, past the outer fade, on clean background. */}
       <div
         className="absolute inset-x-0 px-8 z-10"
-        style={{ top: "72vh", transform: "translateY(-50%)" }}
+        style={{ top: "68vh", transform: "translateY(-50%)" }}
       >
         <motion.p
           initial={{ opacity: 0, y: 12 }}
@@ -180,10 +183,10 @@ export default function HomePage() {
         </motion.p>
       </div>
 
-      {/* Credibility cluster — 88vh, fully outside the halo. */}
+      {/* Credibility cluster — 85vh, fully on background. */}
       <div
         className="absolute inset-x-0 px-8 z-10 flex flex-col items-center gap-3"
-        style={{ top: "88vh", transform: "translateY(-50%)" }}
+        style={{ top: "85vh", transform: "translateY(-50%)" }}
       >
         <motion.p
           initial={{ opacity: 0 }}

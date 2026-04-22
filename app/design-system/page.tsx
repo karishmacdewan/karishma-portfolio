@@ -1,19 +1,14 @@
 import { palette } from "@/tokens/colours";
-import { ThemeToggle } from "./theme-toggle";
 
 export default function DesignSystemPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-5xl px-8 py-24">
-        <header className="flex items-baseline justify-between border-b border-border pb-8 mb-24">
-          <div>
-            <p className="font-sans text-caption uppercase text-muted">
-              v0.1 — step 2
-            </p>
-            <h1 className="font-serif text-display mt-4">Design system</h1>
-          </div>
-          <ThemeToggle />
-        </header>
+    <div className="mx-auto max-w-5xl px-8 pt-40 pb-24">
+      <header className="border-b border-border pb-8 mb-24">
+        <p className="font-sans text-caption uppercase text-muted">
+          internal reference · delete before launch
+        </p>
+        <h1 className="font-serif text-display mt-4">Design system</h1>
+      </header>
 
         <Section label="Typography">
           <div className="space-y-12">
@@ -141,14 +136,7 @@ export default function DesignSystemPage() {
             />
           </dl>
         </Section>
-
-        <footer className="pt-16 border-t border-border">
-          <p className="font-sans text-caption uppercase text-muted">
-            preview route · delete before launch
-          </p>
-        </footer>
       </div>
-    </main>
   );
 }
 

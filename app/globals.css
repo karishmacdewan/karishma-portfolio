@@ -117,3 +117,18 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/*
+ * Custom duration utilities.
+ * Tailwind v4's `--ease-*` theme namespace auto-generates `ease-*` utilities,
+ * but there's no matching `--duration-*` namespace — so we declare them here.
+ */
+@utility duration-fast {
+  transition-duration: var(--duration-fast);
+}
+@utility duration-base {
+  transition-duration: var(--duration-base);
+}
+@utility duration-slow {
+  transition-duration: var(--duration-slow);
+}

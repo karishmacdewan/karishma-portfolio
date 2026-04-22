@@ -10,16 +10,17 @@ const HALO_BASE = 1.0;
 const HALO_PULSE_HIGH = 1.05;
 const HALO_PULSE_LOW = 0.95;
 
-// Gradient is static; the pulse rides on a transform: scale applied to the
-// container (see below). Using closest-side means the gradient completes
-// its fade at the container's nearest edge rather than extending into the
-// square's corners — the halo fully dissolves within its own bounds.
+// Gradient is static; pulse rides on a transform: scale on the container.
+// closest-side → the gradient's outer fade completes at the nearest edge
+// of the (square) container, so the halo dissolves within its own bounds.
+// Stops per spec: 0–35% bg (dark void), 35–48% transition, 48–58% accent
+// (ring peak), 58–85% fade back, 85–100% bg.
 const HALO_GRADIENT = [
   `radial-gradient(circle closest-side at center,`,
   ` var(--background) 0%,`,
-  ` var(--background) 25%,`,
-  ` var(--accent) 40%,`,
-  ` var(--accent) 55%,`,
+  ` var(--background) 35%,`,
+  ` var(--accent) 48%,`,
+  ` var(--accent) 58%,`,
   ` var(--background) 85%,`,
   ` var(--background) 100%)`,
 ].join("");
@@ -117,18 +118,16 @@ export default function HomePage() {
 
   return (
     <section className="relative h-screen min-h-screen overflow-hidden">
-      {/* Halo — contained in a 55vmin square centered at (50vw, 30vh).
-          Using vmin instead of vw keeps the halo from dominating the
-          viewport on desktop landscape (where vh < vw). The outer
-          wrapper handles static positioning; the inner motion.div
-          handles the scale animation so the two transforms don't
-          fight each other. */}
+      {/* Halo — dominant, centered on the viewport, min(85vw, 80vh) so it
+          stays within bounds on both landscape and portrait. Outer div
+          handles positioning via translate; inner motion.div handles the
+          scale pulse so the two transforms don't fight. */}
       <div
-        className="absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
         aria-hidden="true"
       >
         <motion.div
-          className="w-[55vmin] aspect-square"
+          className="w-[min(85vw,80vh)] aspect-square"
           style={{
             scale: haloScale,
             backgroundImage: HALO_GRADIENT,
@@ -136,10 +135,10 @@ export default function HomePage() {
         />
       </div>
 
-      {/* Primary claim — 65vh vertical centre, entirely below the halo. */}
+      {/* Primary claim — vertical centre at 50vh, inside the dark void. */}
       <div
         className="absolute inset-x-0 px-8 z-10"
-        style={{ top: "65vh", transform: "translateY(-50%)" }}
+        style={{ top: "50vh", transform: "translateY(-50%)" }}
       >
         <motion.h1
           variants={lineVariants}
@@ -162,11 +161,10 @@ export default function HomePage() {
         </motion.h1>
       </div>
 
-      {/* Qualifier — 78vh. text-secondary (brighter than text-muted) for
-          readable mid-contrast against the dark background. */}
+      {/* Qualifier — 80vh. text-secondary for readable mid-contrast. */}
       <div
         className="absolute inset-x-0 px-8 z-10"
-        style={{ top: "78vh", transform: "translateY(-50%)" }}
+        style={{ top: "80vh", transform: "translateY(-50%)" }}
       >
         <motion.p
           initial={{ opacity: 0, y: 12 }}
@@ -180,11 +178,10 @@ export default function HomePage() {
         </motion.p>
       </div>
 
-      {/* Credibility cluster — 90vh. Separator dots in accent, status dot
-          12px filled circle in accent. */}
+      {/* Credibility cluster — 92vh, fully on background. */}
       <div
         className="absolute inset-x-0 px-8 z-10 flex flex-col items-center gap-3"
-        style={{ top: "90vh", transform: "translateY(-50%)" }}
+        style={{ top: "92vh", transform: "translateY(-50%)" }}
       >
         <motion.p
           initial={{ opacity: 0 }}

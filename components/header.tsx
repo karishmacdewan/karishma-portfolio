@@ -35,13 +35,13 @@ export function Header() {
           : "bg-transparent border-b border-transparent"
       }`}
     >
-      <div className="mx-auto max-w-6xl px-8 h-16 flex items-center justify-between">
+      <div className="mx-auto max-w-6xl px-8 h-20 flex items-center justify-between">
         <Link
           href="/"
           aria-label="Karishma Dewan — home"
-          className="font-serif text-h3 tracking-wider text-foreground"
+          className="font-serif italic lowercase text-h2 text-foreground"
         >
-          Karishma Dewan
+          Karishma Dewan.
         </Link>
 
         <div className="flex items-center gap-16">

@@ -20,9 +20,9 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={`Switch to ${target} theme`}
-      className="font-serif text-body-lg text-muted hover:text-foreground transition-colors duration-fast ease-out-soft"
+      className="text-body-lg text-muted hover:text-foreground transition-colors duration-fast ease-out-soft"
     >
-      {target}
+      <span aria-hidden="true">◐</span>
     </button>
   );
 }

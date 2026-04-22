@@ -41,7 +41,7 @@ export function Header() {
           aria-label="Karishma Dewan — home"
           className="font-serif italic lowercase text-h2 text-foreground"
         >
-          Karishma Dewan.
+          Karishma.
         </Link>
 
         <div className="flex items-center gap-16">

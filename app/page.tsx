@@ -12,14 +12,14 @@ const BRUSH_EASE: [number, number, number, number] = [0.32, 0.72, 0.24, 1];
  *
  * Two arcs with slightly different radii (101×99, 99×101) for subtle
  * asymmetry that reads as gesture rather than geometry. Gap (~25°) at the
- * bottom, facing the text stack below; the opening points at the content.
+ * bottom, facing the text stack below.
  *
  * The "brush lift" at the end is produced by an SVG <mask> with a radial
  * gradient centered on the endpoint — the stroke is fully visible
  * everywhere except within ~16 units of (21.6, 97.6), where the mask
  * luminance fades to transparent. Combined with strokeLinecap="round" and
- * a subtle feTurbulence+feDisplacementMap on the whole path, the terminal
- * reads as a brush lifting off the page rather than a timer-snipped line.
+ * a subtle feTurbulence + feDisplacementMap on the whole path, the
+ * terminal reads as a brush lifting off the page, not a timer-snipped line.
  */
 const CIRCLE_PATH =
   "M -21.6 97.6 A 101 99 0 0 1 0 -100 A 99 101 0 0 1 21.6 97.6";
@@ -29,10 +29,6 @@ type IntroState = {
   prefersReducedMotion: boolean;
 };
 
-/**
- * Read client-only intro state synchronously at first render. Avoids
- * setState-in-effect and keeps transitions correctly timed from frame one.
- */
 function readIntroState(): IntroState {
   if (typeof window === "undefined") {
     return { skipIntro: false, prefersReducedMotion: false };
@@ -51,8 +47,6 @@ export default function HomePage() {
   const [{ skipIntro, prefersReducedMotion }] = useState(readIntroState);
   const [breathing, setBreathing] = useState(false);
 
-  // Cursor-responsive rotation on the mark. Spring-damped so the motion
-  // reads as physical rather than mapped 1:1 to pointer position.
   const rotate = useSpring(0, { damping: 30, stiffness: 100 });
 
   useEffect(() => {
@@ -61,16 +55,12 @@ export default function HomePage() {
     }
   }, [skipIntro]);
 
-  // Breathing begins after the intro has fully settled (or immediately on a
-  // skip). Reduced-motion disables the loop entirely.
   useEffect(() => {
     if (prefersReducedMotion) return;
     const timer = setTimeout(() => setBreathing(true), skipIntro ? 0 : 4300);
     return () => clearTimeout(timer);
   }, [skipIntro, prefersReducedMotion]);
 
-  // Cursor tracking — disabled on touch devices (no hover) and for users
-  // who opt out of motion.
   useEffect(() => {
     if (prefersReducedMotion) return;
     if (typeof window === "undefined") return;
@@ -109,21 +99,19 @@ export default function HomePage() {
     visible: {
       transition: {
         staggerChildren: skipIntro ? 0 : 0.12,
-        // All post-draw timings shifted +0.3s to accommodate the longer
-        // 1.8s brush stroke and preserve the settle beat.
         delayChildren: skipIntro ? 0 : 2.4,
       },
     },
   };
 
   return (
-    <section className="relative min-h-screen overflow-hidden text-center">
-      {/* Circle mark — absolute, anchored at 40vh vertical midpoint,
-          sized proportionally to viewport height but bounded on portrait
-          mobile by 85vw. */}
+    <section className="relative min-h-screen flex flex-col items-center text-center px-8 pt-[14vh] overflow-hidden">
+      {/* Circle mark — contained form at the top of the hero. Sized
+          proportionally to viewport height, capped at 640px on taller
+          screens, bounded by 85vw on narrow portrait mobile. */}
       <motion.div
-        className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(60vh,85vw)] aspect-square pointer-events-none"
-        style={{ top: "40vh", rotate }}
+        className="w-[min(60vh,640px,85vw)] aspect-square shrink-0 pointer-events-none"
+        style={{ rotate }}
         initial={{ scale: 1.02 }}
         animate={breathing ? { scale: [1, 1.015, 1] } : { scale: 1 }}
         transition={
@@ -140,8 +128,6 @@ export default function HomePage() {
           aria-hidden="true"
         >
           <defs>
-            {/* Subtle edge roughness. Low-intensity displacement reads as
-                brush irregularity without tipping into noise. */}
             <filter id="brush-texture">
               <feTurbulence
                 type="fractalNoise"
@@ -159,9 +145,6 @@ export default function HomePage() {
               />
             </filter>
 
-            {/* Tail-fade mask — radial gradient at the endpoint turns
-                mask-luminance to transparent, dissolving the stroke's
-                tip into nothing. Reads as a brush lifting. */}
             <radialGradient id="tail-grad">
               <stop offset="0" stopColor="black" stopOpacity="1" />
               <stop offset="0.5" stopColor="black" stopOpacity="0.7" />
@@ -206,17 +189,14 @@ export default function HomePage() {
         </svg>
       </motion.div>
 
-      {/* Primary + qualifier — positioned to cross the lower arc, text
-          above circle in z-order so the stroke reads behind the letters. */}
-      <div
-        className="absolute left-0 right-0 z-10 px-8 flex flex-col items-center gap-12"
-        style={{ top: "55vh" }}
-      >
+      {/* Primary claim sits cleanly below the circle's gap with a
+          deliberate 2rem breath; no overlap with the stroke. */}
+      <div className="relative z-10 mt-8 flex flex-col items-center gap-10 max-w-5xl">
         <motion.h1
           variants={lineVariants}
           initial="hidden"
           animate="visible"
-          className="font-serif text-hero max-w-5xl"
+          className="font-serif text-hero"
         >
           <motion.span variants={wordVariants} className="inline-block">
             Strategy,
@@ -244,14 +224,19 @@ export default function HomePage() {
         </motion.p>
       </div>
 
-      {/* Bottom credibility cluster — proof strip + status line as one
-          composed two-line block near the bottom of the first viewport. */}
-      <div className="absolute bottom-[10vh] left-0 right-0 z-10 flex flex-col items-center gap-2 px-8">
+      {/* Flex spacer — pushes the credibility cluster to the bottom on
+          taller viewports, with a minimum breath on shorter ones. */}
+      <div className="flex-1 min-h-[6vh]" aria-hidden="true" />
+
+      {/* Credibility cluster — proof strip + status line as a composed
+          two-line block. 18px italic serif, secondary contrast (brighter
+          than muted, below foreground), separator dots in accent. */}
+      <div className="relative z-10 flex flex-col items-center gap-3 pb-[10vh]">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={tx(3.8, 0.5)}
-          className="font-serif italic text-body text-muted tracking-[0.02em]"
+          className="font-serif italic text-body-lg text-secondary tracking-[0.01em]"
         >
           ex-google <span className="text-accent">·</span> founder{" "}
           <span className="text-accent">·</span> engineer
@@ -261,11 +246,11 @@ export default function HomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={tx(4.05, 0.5)}
-          className="flex items-center gap-3 font-serif italic text-body text-muted tracking-[0.02em]"
+          className="flex items-center gap-3 font-serif italic text-body-lg text-secondary tracking-[0.01em]"
         >
           <span
             aria-hidden="true"
-            className="w-[10px] h-[10px] rounded-full bg-accent shrink-0"
+            className="w-[12px] h-[12px] rounded-full bg-accent shrink-0"
           />
           <span>available for select engagements — 2026</span>
         </motion.p>

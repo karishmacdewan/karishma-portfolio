@@ -85,6 +85,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-secondary: var(--secondary);
   --color-muted: var(--muted);
   --color-border: var(--border);
   --color-surface: var(--surface);
@@ -96,6 +97,7 @@
 :root {
   --background: var(--color-ink);
   --foreground: var(--color-cream);
+  --secondary: var(--color-grey-300);
   --muted: var(--color-grey-400);
   --border: var(--color-grey-800);
   --surface: var(--color-grey-900);
@@ -108,6 +110,7 @@
 [data-theme="light"] {
   --background: var(--color-paper);
   --foreground: var(--color-char);
+  --secondary: var(--color-grey-600);
   --muted: var(--color-grey-500);
   --border: var(--color-grey-200);
   --surface: var(--color-grey-50);

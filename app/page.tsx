@@ -178,33 +178,36 @@ export default function HomePage() {
         </motion.p>
       </div>
 
-      {/* Credibility cluster — 92vh, fully on background. */}
-      <div
-        className="absolute inset-x-0 px-8 z-10 flex flex-col items-center gap-3"
-        style={{ top: "92vh", transform: "translateY(-50%)" }}
-      >
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={tx(3.3, 0.5)}
-          className="text-center font-serif italic text-body-lg text-secondary tracking-[0.01em]"
-        >
-          ex-google <span className="text-accent">·</span> founder{" "}
-          <span className="text-accent">·</span> engineer
-        </motion.p>
+      {/* Hero meta row — proof strip (left) and status line (right) split
+          to opposite bottom corners. Geist Sans at 13px for tonal contrast
+          with the italic serif qualifier above. Container mirrors the
+          header's max-w-6xl px-8 so both align on the x-axis with the
+          wordmark and nav. */}
+      <div className="absolute inset-x-0 bottom-8 z-10">
+        <div className="mx-auto max-w-6xl px-8 flex items-center justify-between gap-6">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={tx(3.3, 0.5)}
+            className="font-sans text-[13px] lowercase text-muted tracking-[0.04em]"
+          >
+            ex-google <span className="text-accent">·</span> founder{" "}
+            <span className="text-accent">·</span> engineer
+          </motion.p>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={tx(3.55, 0.5)}
-          className="flex items-center gap-3 text-center font-serif italic text-body-lg text-secondary tracking-[0.01em]"
-        >
-          <span
-            aria-hidden="true"
-            className="w-[12px] h-[12px] rounded-full bg-accent shrink-0"
-          />
-          <span>available for select engagements — 2026</span>
-        </motion.p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={tx(3.55, 0.5)}
+            className="flex items-center gap-3 font-sans text-[13px] lowercase text-muted tracking-[0.04em]"
+          >
+            <span
+              aria-hidden="true"
+              className="w-[12px] h-[12px] rounded-full bg-accent shrink-0"
+            />
+            <span>available for select engagements — 2026</span>
+          </motion.p>
+        </div>
       </div>
     </section>
   );

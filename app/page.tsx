@@ -11,32 +11,29 @@ const HALO_BASE = 1.0;
 const HALO_PULSE_HIGH = 1.05;
 const HALO_PULSE_LOW = 0.95;
 
-// Halo — multi-layered atmospheric glow.
-//
-// Three stacked radial gradients, each at the viewport centre. As layers
-// move outward their radius grows, their opacity drops, and their blur
-// deepens — so the combined effect reads as a soft wash of warm light
-// rather than a defined ring. Scale animation (intro + pulse) rides on
-// the shared parent; all three layers scale together.
-const HALO_OUTER = [
-  `radial-gradient(circle 120vmin at 50% 50%,`,
-  ` color-mix(in oklab, var(--accent) 14%, transparent) 0%,`,
-  ` color-mix(in oklab, var(--accent) 8%, transparent) 35%,`,
-  ` color-mix(in oklab, var(--accent) 3%, transparent) 60%,`,
-  ` transparent 90%)`,
+// Halo — contained ring (dark void + warm accent ring + fade) plus a
+// subtle blurred ambient layer that extends the glow a bit further into
+// the surrounding space at low opacity. The ring stays the focal mark;
+// the ambient is a quiet warmth the eye picks up in peripheral vision.
+const HALO_GRADIENT = [
+  `radial-gradient(circle closest-side at center,`,
+  ` var(--background) 0%,`,
+  ` var(--background) 35%,`,
+  ` var(--accent) 48%,`,
+  ` var(--accent) 58%,`,
+  ` var(--background) 85%,`,
+  ` var(--background) 100%)`,
 ].join("");
 
-const HALO_MID = [
-  `radial-gradient(circle 70vmin at 50% 50%,`,
-  ` color-mix(in oklab, var(--accent) 28%, transparent) 0%,`,
-  ` color-mix(in oklab, var(--accent) 15%, transparent) 45%,`,
-  ` transparent 90%)`,
-].join("");
-
-const HALO_INNER = [
-  `radial-gradient(circle 40vmin at 50% 50%,`,
-  ` color-mix(in oklab, var(--accent) 45%, transparent) 0%,`,
-  ` color-mix(in oklab, var(--accent) 22%, transparent) 50%,`,
+// Ambient — transparent through the centre so the ring's dark core stays
+// clean; warm shoulder that picks up just outside the ring's outer fade,
+// heavily blurred to dissolve any visible edge.
+const HALO_AMBIENT = [
+  `radial-gradient(circle 80vmin at 50% 50%,`,
+  ` transparent 0%,`,
+  ` transparent 25%,`,
+  ` color-mix(in oklab, var(--accent) 10%, transparent) 45%,`,
+  ` color-mix(in oklab, var(--accent) 5%, transparent) 65%,`,
   ` transparent 90%)`,
 ].join("");
 
@@ -134,26 +131,22 @@ export default function HomePage() {
   return (
     <>
     <section className="relative h-screen min-h-screen overflow-hidden">
-      {/* Halo — three stacked radial-gradient layers (outer / mid / inner).
-          Each layer gets progressively smaller and brighter; each gets
-          progressively less blur. The shared parent motion.div scales
-          all three together for intro + pulse. */}
+      {/* Halo — contained ring + subtle blurred ambient extension. Both
+          layers scale together via the shared parent (intro + pulse). */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
         style={{ scale: haloScale }}
         aria-hidden="true"
       >
+        {/* Ambient extension — low opacity, heavy blur, no visible edge. */}
         <div
           className="absolute inset-0"
-          style={{ backgroundImage: HALO_OUTER, filter: "blur(80px)" }}
+          style={{ backgroundImage: HALO_AMBIENT, filter: "blur(60px)" }}
         />
+        {/* Contained ring — the previous design, unchanged. */}
         <div
-          className="absolute inset-0"
-          style={{ backgroundImage: HALO_MID, filter: "blur(50px)" }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{ backgroundImage: HALO_INNER, filter: "blur(30px)" }}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(85vw,80vh)] aspect-square"
+          style={{ backgroundImage: HALO_GRADIENT }}
         />
       </motion.div>
 

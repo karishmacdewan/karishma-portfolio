@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { PageTransition } from "@/components/page-transition";
+import { ScrollProgress } from "@/components/scroll-progress";
 
 const geist = Geist({
   variable: "--font-geist",
@@ -34,6 +35,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Header />
+        <ScrollProgress />
         <main className="flex-1">
           <PageTransition>{children}</PageTransition>
         </main>

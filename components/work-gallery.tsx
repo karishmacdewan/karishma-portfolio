@@ -226,19 +226,34 @@ function PinnedPanel({
   // Parallax window: what fraction of 0..1 this panel owns. Panel i is
   // "centered" at progress i / (total − 1); its influence extends one
   // step on either side.
+  //
+  // Inputs to useTransform must stay inside [0, 1] and be monotonically
+  // non-decreasing. Framer Motion 12 pipes scroll-linked transforms
+  // through the Web Animations API, which rejects keyframe offsets
+  // outside the normalised range (it errors with "Offsets must be
+  // monotonically non-decreasing" even when the cause is out-of-range
+  // values). So we clamp each stop — duplicates at the edges are fine
+  // and mean "no pre-entry / post-exit parallax for this panel", which
+  // is exactly right for the first and last panels.
   const step = total === 1 ? 1 : 1 / (total - 1);
   const center = total === 1 ? 0.5 : index / (total - 1);
+
+  const imgLeft = Math.max(0, center - step);
+  const imgRight = Math.min(1, center + step);
+  const copyHalf = step * 0.6;
+  const copyLeft = Math.max(0, center - copyHalf);
+  const copyRight = Math.min(1, center + copyHalf);
 
   // Image translates +/- 12% across its container, scales down at the
   // edges. Subtle — depth, not a show.
   const imgX = useTransform(
     scrollYProgress,
-    [center - step, center, center + step],
+    [imgLeft, center, imgRight],
     ["12%", "0%", "-12%"],
   );
   const imgScale = useTransform(
     scrollYProgress,
-    [center - step, center, center + step],
+    [imgLeft, center, imgRight],
     [0.94, 1, 0.94],
   );
 
@@ -246,12 +261,12 @@ function PinnedPanel({
   // on the active panel without being theatrical.
   const copyOpacity = useTransform(
     scrollYProgress,
-    [center - step * 0.6, center, center + step * 0.6],
+    [copyLeft, center, copyRight],
     [0.45, 1, 0.45],
   );
   const copyY = useTransform(
     scrollYProgress,
-    [center - step * 0.6, center, center + step * 0.6],
+    [copyLeft, center, copyRight],
     [16, 0, -16],
   );
 

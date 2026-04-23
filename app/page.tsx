@@ -21,8 +21,11 @@ const HALO_GRADIENT = [
   ` var(--background) 35%,`,
   ` var(--accent) 48%,`,
   ` var(--accent) 58%,`,
-  ` var(--background) 85%,`,
-  ` var(--background) 100%)`,
+  // Fade to transparent (not var(--background)) so the square container's
+  // corners — and the outer fade zone — don't paint an opaque dark box
+  // over the ambient glow layer below.
+  ` transparent 85%,`,
+  ` transparent 100%)`,
 ].join("");
 
 // Ambient — transparent through the centre so the ring's dark core stays

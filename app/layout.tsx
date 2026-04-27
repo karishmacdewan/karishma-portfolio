@@ -36,7 +36,14 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <Header />
         <ScrollProgress />
-        <main className="flex-1">
+        {/*
+         * `relative` on <main> gives the pinned galleries a positioned
+         * ancestor for useScroll's offset math. Without it, Framer
+         * Motion emits "container has a non-static position" warnings
+         * and scroll-linked motion values fail to update — silently
+         * breaks /work and /about horizontal galleries.
+         */}
+        <main className="flex-1 relative">
           <PageTransition>{children}</PageTransition>
         </main>
         <Footer />

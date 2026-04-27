@@ -141,3 +141,19 @@ body {
 @utility duration-slow {
   transition-duration: var(--duration-slow);
 }
+
+/*
+ * Page-scoped scroll-snap opt-in.
+ *
+ * Applied to <html> by app/about/page.tsx for the lifetime of that
+ * route (removed on unmount). Other routes never receive the
+ * attribute, so their scrolling stays normal. Honours reduced-motion
+ * by short-circuiting at the attribute-set step in the page effect.
+ */
+html[data-scroll-snap="y-mandatory"] {
+  scroll-snap-type: y mandatory;
+  /* Give sticky/fixed chrome room to breathe when snapping — the
+     80px fixed header would otherwise obscure the top of each
+     section's snap target. */
+  scroll-padding-top: 0px;
+}

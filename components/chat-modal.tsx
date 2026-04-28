@@ -197,7 +197,10 @@ export function ChatModal({
             role="dialog"
             aria-modal="true"
             aria-labelledby="chat-modal-title"
-            className="relative w-full max-w-2xl max-h-[85vh] flex flex-col bg-surface border border-border rounded-sm shadow-2xl"
+            // Fixed height: the modal always takes 85% of the viewport
+            // height regardless of how much content it holds. The message
+            // area inside scrolls — header and input stay pinned.
+            className="relative w-full max-w-2xl h-[85vh] flex flex-col bg-surface border border-border rounded-sm shadow-2xl"
           >
             {/* Close button — top-right */}
             <button
@@ -259,10 +262,11 @@ export function ChatModal({
                     <div
                       className={
                         m.role === "user"
-                          ? // User: sans, foreground, with a subtle terracotta-tinted bg
+                          ? // User: sans, foreground, with a subtle bg
                             "max-w-[75%] font-sans text-body text-foreground bg-background/60 border border-border rounded-sm px-4 py-3"
-                          : // Assistant: italic serif (matches site register)
-                            "max-w-[85%] font-serif italic text-body-lg text-foreground leading-[1.5]"
+                          : // Assistant: sans-serif (Geist), readable size,
+                            // generous leading for chat-pace reading.
+                            "max-w-[85%] font-sans text-body text-foreground leading-[1.6]"
                       }
                     >
                       {m.content}

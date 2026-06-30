@@ -27,9 +27,11 @@ const CASE_STUDIES: WorkCase[] = [
   {
     tag: "Product",
     year: "2026",
-    title: "Aperture, a benchmarking tool for AI ingestion pipelines.",
+    title: "Aperture",
+    tagline: "Helping enterprise knowledge reach AI.",
     description:
-      "Scores extraction, chunking, and embedding strategies on quality, cost, and speed — built solo, end to end, and shipped to production.",
+      "Better AI starts before the model. Aperture helps teams choose the right document ingestion architecture using evidence instead of assumptions.",
+    descriptionVariant: "sans",
     preview:
       "radial-gradient(circle at 65% 25%, color-mix(in oklab, var(--accent) 60%, transparent), var(--color-grey-600) 50%, var(--color-grey-900) 100%)",
   },

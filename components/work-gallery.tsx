@@ -38,12 +38,28 @@ export type WorkCase = {
   tag: string;
   year: string;
   title: string;
+  /** Optional second-line headline, rendered below `title` at one step down
+   *  in scale. Used for entries where `title` is a short name/wordmark
+   *  (e.g. a product name) rather than a full descriptive sentence. */
+  tagline?: string;
   description: string;
-  preview: string; // CSS background-image (gradient)
+  /** "serif" (default) matches the original large pull-quote-style
+   *  description. "sans" renders smaller, muted, sans-serif body copy —
+   *  for entries that pair a serif headline/tagline with plainer
+   *  explanatory copy underneath. */
+  descriptionVariant?: "serif" | "sans";
+  preview: string; // CSS background-image (gradient) or background-image url
   slug?: string;
 };
 
 type Mode = "pinned" | "carousel" | "list";
+
+function descriptionClass(c: WorkCase, serifClass: string): string {
+  if (c.descriptionVariant === "sans") {
+    return "font-sans text-small leading-relaxed text-muted max-w-[480px]";
+  }
+  return serifClass;
+}
 
 // useSyncExternalStore keeps us out of the "setState in effect" lint
 // bucket and gives a clean SSR/client split: the server snapshot is
@@ -302,7 +318,12 @@ function PinnedPanel({
             <span>{c.year}</span>
           </div>
           <h2 className="font-serif text-display leading-[1.05]">{c.title}</h2>
-          <p className="font-serif text-h3 text-secondary">{c.description}</p>
+          {c.tagline && (
+            <p className="font-serif text-h2 leading-[1.15] text-foreground">{c.tagline}</p>
+          )}
+          <p className={descriptionClass(c, "font-serif text-h3 text-secondary")}>
+            {c.description}
+          </p>
           {c.slug ? (
             <Link
               href={`/work/${c.slug}`}
@@ -363,7 +384,12 @@ function TouchCarousel({ cases }: { cases: WorkCase[] }) {
                 <span>{c.year}</span>
               </div>
               <h2 className="font-serif text-h1 leading-[1.05]">{c.title}</h2>
-              <p className="font-serif text-h3 text-secondary">
+              {c.tagline && (
+                <p className="font-serif text-h2 leading-[1.15] text-foreground">
+                  {c.tagline}
+                </p>
+              )}
+              <p className={descriptionClass(c, "font-serif text-h3 text-secondary")}>
                 {c.description}
               </p>
               {c.slug ? (
@@ -451,7 +477,10 @@ function ListRow({
         >
           {c.title}
         </h2>
-        <p className="font-serif text-h3 text-secondary max-w-2xl">
+        {c.tagline && (
+          <p className="font-serif text-h2 leading-[1.15] text-foreground">{c.tagline}</p>
+        )}
+        <p className={descriptionClass(c, "font-serif text-h3 text-secondary max-w-2xl")}>
           {c.description}
         </p>
       </div>

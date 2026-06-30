@@ -39,7 +39,7 @@ export default function AgentCaseStudy() {
       <header className="mt-10 mb-20 max-w-4xl">
         <div className="flex items-center gap-8 font-sans text-caption uppercase text-muted mb-8">
           <span>
-            <span className="text-accent">01</span> · Agent
+            <span className="text-accent">02</span> · Agent
           </span>
           <span>2026</span>
         </div>

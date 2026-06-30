@@ -34,6 +34,7 @@ const CASE_STUDIES: WorkCase[] = [
     descriptionVariant: "sans",
     preview:
       "radial-gradient(circle at 65% 25%, color-mix(in oklab, var(--accent) 60%, transparent), var(--color-grey-600) 50%, var(--color-grey-900) 100%)",
+    slug: "aperture",
   },
   {
     tag: "Agent",

@@ -95,7 +95,7 @@ export default function ProductCaseStudy() {
       <header className="mt-10 mb-20 max-w-4xl">
         <div className="flex items-center gap-8 font-sans text-caption uppercase text-muted mb-8">
           <span>
-            <span className="text-accent">02</span> · Product
+            <span className="text-accent">03</span> · Product
           </span>
           <span>2025</span>
         </div>

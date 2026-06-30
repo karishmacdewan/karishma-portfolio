@@ -198,7 +198,7 @@ export default function BrandCaseStudy() {
       <header className="mt-10 mb-20 max-w-4xl">
         <div className="flex items-center gap-8 font-sans text-caption uppercase text-muted mb-8">
           <span>
-            <span className="text-accent">03</span> · Brand
+            <span className="text-accent">04</span> · Brand
           </span>
           <span>2024</span>
         </div>

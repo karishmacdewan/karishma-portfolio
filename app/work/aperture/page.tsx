@@ -171,6 +171,21 @@ function SectionHero({ reduced }: ReducedProps) {
         <span>Work</span>
       </Link>
 
+      <Link
+        href={APERTURE_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group absolute right-8 top-8 inline-flex items-center gap-2 rounded-full border border-border px-4 py-1.5 font-sans text-caption uppercase text-muted hover:border-accent hover:text-accent transition-colors duration-fast ease-out-soft"
+      >
+        <span>Visit Aperture</span>
+        <span
+          aria-hidden="true"
+          className="transition-transform duration-fast ease-out-soft group-hover:translate-x-0.5"
+        >
+          ↗
+        </span>
+      </Link>
+
       <div className="flex items-center gap-8 font-sans text-caption uppercase text-muted mb-6">
         <span>
           <span className="text-accent">01</span> · Product
@@ -209,18 +224,18 @@ function SectionHero({ reduced }: ReducedProps) {
         initial={reduced ? false : { opacity: 0, y: 12 }}
         animate={reduced ? undefined : { opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: EASE_OUT_SOFT, delay: 0.85 }}
-        className="mt-8 flex max-w-3xl flex-wrap gap-x-10 gap-y-2 border-t border-b border-border py-4 font-mono text-[11px] text-muted"
+        className="mt-8 flex max-w-3xl flex-wrap gap-x-10 gap-y-2 border-t border-b border-border py-4 font-mono text-[11px] text-secondary"
       >
         <span>
-          <span className="text-muted/60">role</span> solo — product, backend,
+          <span className="text-muted">role</span> solo — product, backend,
           frontend, deploy
         </span>
         <span>
-          <span className="text-muted/60">stack</span> FastAPI · Next.js · GCP
+          <span className="text-muted">stack</span> FastAPI · Next.js · GCP
           · Vercel
         </span>
         <span>
-          <span className="text-muted/60">scope</span> 5 stages · 14
+          <span className="text-muted">scope</span> 5 stages · 14
           components
         </span>
       </motion.div>
@@ -232,7 +247,7 @@ function SectionHero({ reduced }: ReducedProps) {
         transition={{ duration: 0.8, ease: EASE_OUT_SOFT, delay: 0.1 }}
         className="mt-8 mx-auto w-full max-w-4xl"
       >
-        <div className="overflow-hidden rounded-lg border border-border">
+        <div className="overflow-hidden rounded-lg border border-foreground/15 shadow-[0_30px_70px_-30px_rgba(0,0,0,0.5)]">
           <Image
             src="/work/aperture/hero.png"
             alt="Aperture homepage in dark mode, showing the extract-chunk-enrich-embed-store pipeline and a last-run proof card scoring 87/100."
@@ -367,7 +382,7 @@ function SectionInsight({ reduced }: ReducedProps) {
           <span className="text-accent">03</span> · The insight
         </p>
         <blockquote>
-          <p className="font-serif italic text-h1 md:text-hero text-foreground leading-[1.05] md:leading-[1.0]">
+          <p className="font-serif italic text-h1 md:text-display text-foreground leading-[1.05] md:leading-[1.05]">
             A model can&apos;t retrieve what ingestion already lost.
           </p>
         </blockquote>
@@ -516,7 +531,7 @@ function HighlightFigure({
     >
       <motion.div
         variants={fade}
-        className="mx-auto w-full max-w-3xl overflow-hidden rounded-lg border border-border"
+        className="mx-auto w-full max-w-3xl overflow-hidden rounded-lg border border-foreground/15 shadow-[0_30px_70px_-30px_rgba(0,0,0,0.5)]"
       >
         <Image
           src={src}

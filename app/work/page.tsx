@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { WorkGallery, type WorkCase } from "@/components/work-gallery";
+import {
+  WorkGallery,
+  ApertureBlueprintOverlay,
+  type WorkCase,
+} from "@/components/work-gallery";
 
 export const metadata: Metadata = {
   title: "Work — Karishma Dewan",
@@ -28,12 +32,13 @@ const CASE_STUDIES: WorkCase[] = [
     tag: "Product",
     year: "2026",
     title: "Aperture",
-    tagline: "Helping enterprise knowledge reach AI.",
+    tagline: "Better AI starts before the model.",
     description:
-      "Better AI starts before the model. Aperture helps teams choose the right document ingestion architecture using evidence instead of assumptions.",
+      "Aperture benchmarks document ingestion pipelines so teams can choose the highest-performing architecture using evidence instead of assumptions.",
     descriptionVariant: "sans",
     preview:
       "radial-gradient(circle at 65% 25%, color-mix(in oklab, var(--accent) 60%, transparent), var(--color-grey-600) 50%, var(--color-grey-900) 100%)",
+    overlay: <ApertureBlueprintOverlay />,
     slug: "aperture",
   },
   {

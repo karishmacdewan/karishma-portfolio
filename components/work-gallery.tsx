@@ -49,8 +49,90 @@ export type WorkCase = {
    *  explanatory copy underneath. */
   descriptionVariant?: "serif" | "sans";
   preview: string; // CSS background-image (gradient) or background-image url
+  /** Optional abstract motif layered over `preview`, full-bleed. For
+   *  case studies where a plain gradient feels generic — kept rare and
+   *  always faint (5–10% stroke opacity) so it reads as texture, not
+   *  illustration. */
+  overlay?: React.ReactNode;
   slug?: string;
 };
+
+/*
+ * ApertureBlueprintOverlay — abstract cover motif for the Aperture
+ * panel. Built as a visual pun on the product name: a faint iris /
+ * diaphragm at low opacity, with five blade lines radiating from its
+ * centre — one per ingestion stage (Extract, Chunk, Enrich, Embed,
+ * Store) — and a handful of unlabelled tick-marks along one blade as
+ * the only nod to "five stages." A quiet drafting grid and two corner
+ * registration crosshairs push it toward "technical blueprint" rather
+ * than "software illustration." No text, no icons, no arrows — every
+ * stroke sits between 3.5% and 9% opacity so it only resolves on a
+ * close look.
+ */
+export function ApertureBlueprintOverlay() {
+  const bladeAngles = [-54, -18, 18, 54, 90] as const;
+  const cx = 420;
+  const cy = 460;
+  const rings = [70, 130, 200, 280];
+  const tickDistances = [80, 150, 210, 260, 305];
+  const tickAngle = bladeAngles[4];
+
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 800 1000"
+      preserveAspectRatio="xMidYMid slice"
+      className="absolute inset-0 h-full w-full"
+    >
+      {/* Drafting grid */}
+      <g stroke="var(--color-cream)" strokeWidth="1">
+        {Array.from({ length: 9 }, (_, i) => 100 + i * 80).map((y) => (
+          <line key={`h${y}`} x1="0" y1={y} x2="800" y2={y} opacity="0.035" />
+        ))}
+        {Array.from({ length: 9 }, (_, i) => 40 + i * 90).map((x) => (
+          <line key={`v${x}`} x1={x} y1="0" x2={x} y2="1000" opacity="0.035" />
+        ))}
+      </g>
+
+      {/* Iris rings — the aperture pun */}
+      <g fill="none" stroke="var(--color-cream)" strokeWidth="1">
+        {rings.map((r) => (
+          <circle key={r} cx={cx} cy={cy} r={r} opacity="0.07" />
+        ))}
+      </g>
+
+      {/* Blade lines — five, radiating from the iris centre */}
+      <g stroke="var(--color-cream)" strokeWidth="1">
+        {bladeAngles.map((deg) => {
+          const rad = (deg * Math.PI) / 180;
+          const x2 = cx + 320 * Math.cos(rad);
+          const y2 = cy + 320 * Math.sin(rad);
+          return (
+            <line key={deg} x1={cx} y1={cy} x2={x2} y2={y2} opacity="0.07" />
+          );
+        })}
+      </g>
+
+      {/* Stage ticks — unlabelled, along a single blade */}
+      <g fill="var(--color-cream)">
+        {tickDistances.map((d, i) => {
+          const rad = (tickAngle * Math.PI) / 180;
+          const x = cx + d * Math.cos(rad);
+          const y = cy + d * Math.sin(rad);
+          return <circle key={i} cx={x} cy={y} r="2.5" opacity="0.09" />;
+        })}
+      </g>
+
+      {/* Registration crosshairs — drafting-plan corner marks */}
+      <g stroke="var(--color-cream)" strokeWidth="1" opacity="0.08">
+        <line x1="60" y1="50" x2="60" y2="80" />
+        <line x1="45" y1="65" x2="75" y2="65" />
+        <line x1="740" y1="920" x2="740" y2="950" />
+        <line x1="725" y1="935" x2="755" y2="935" />
+      </g>
+    </svg>
+  );
+}
 
 type Mode = "pinned" | "carousel" | "list";
 
@@ -300,6 +382,11 @@ function PinnedPanel({
             style={{ x: imgX, scale: imgScale, backgroundImage: c.preview }}
             aria-hidden="true"
           />
+          {c.overlay && (
+            <div className="absolute inset-0 pointer-events-none">
+              {c.overlay}
+            </div>
+          )}
         </div>
 
         {/* Copy side — everything is vertically centred inside the
@@ -369,11 +456,18 @@ function TouchCarousel({ cases }: { cases: WorkCase[] }) {
               key={`${c.tag}-${c.year}-${i}`}
               className="snap-start shrink-0 w-[84vw] flex flex-col gap-6"
             >
-              <div
-                className="w-full aspect-[4/5] rounded-sm overflow-hidden"
-                style={{ backgroundImage: c.preview }}
-                aria-hidden="true"
-              />
+              <div className="relative w-full aspect-[4/5] rounded-sm overflow-hidden">
+                <div
+                  className="absolute inset-0"
+                  style={{ backgroundImage: c.preview }}
+                  aria-hidden="true"
+                />
+                {c.overlay && (
+                  <div className="absolute inset-0 pointer-events-none">
+                    {c.overlay}
+                  </div>
+                )}
+              </div>
               <div className="flex items-center gap-6 font-sans text-caption uppercase text-muted">
                 <span>
                   <span className="text-accent">

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
  * WORK INDEX — pinned horizontal gallery.
  *
  * The server renders the editorial header (label, title, qualifier) and
- * hands the six case studies to the client <WorkGallery>. The gallery
+ * hands the seven case studies to the client <WorkGallery>. The gallery
  * picks its mode at hydration:
  *
  *   - Desktop + pointer   →  pinned scroll-hijack with parallax
@@ -19,17 +19,26 @@ export const metadata: Metadata = {
  *   - prefers-reduced     →  the prior vertical list, unchanged in feel
  *
  * Gradient previews are inline CSS background-images — same register as
- * the homepage "Selected work" cursor previews. Six unique variants so
+ * the homepage "Selected work" cursor previews. Seven unique variants so
  * the set reads as curated, not duplicated.
  */
 
 const CASE_STUDIES: WorkCase[] = [
   {
-    tag: "Agent",
-    year: "2025",
-    title: "A conversational companion for women's hormonal wellness.",
+    tag: "Product",
+    year: "2026",
+    title: "Aperture, a benchmarking tool for AI ingestion pipelines.",
     description:
-      "Interaction model, domain knowledge, and voice for a Series A wellness brand.",
+      "Scores extraction, chunking, and embedding strategies on quality, cost, and speed — built solo, end to end, and shipped to production.",
+    preview:
+      "radial-gradient(circle at 65% 25%, color-mix(in oklab, var(--accent) 60%, transparent), var(--color-grey-600) 50%, var(--color-grey-900) 100%)",
+  },
+  {
+    tag: "Agent",
+    year: "2026",
+    title: "A conversational companion for Owne, my hormonal-health brand.",
+    description:
+      "Retrieval, structured outputs, and safety guardrails, built end to end as founder.",
     preview:
       "radial-gradient(circle at 30% 40%, color-mix(in oklab, var(--accent) 80%, transparent), color-mix(in oklab, var(--accent) 30%, transparent) 45%, var(--color-grey-800) 85%)",
     slug: "agent-conversational-companion",
@@ -89,7 +98,7 @@ export default function WorkPage() {
       <header className="mx-auto max-w-6xl px-8 pt-[20vh] pb-24">
         <p className="font-sans text-caption uppercase text-muted mb-6">Work</p>
         <h1 className="font-serif text-display">
-          Selected projects, 2023–2025.
+          Selected projects, 2023–2026.
         </h1>
         <p className="font-serif text-h3 text-secondary mt-10 max-w-3xl">
           A short list. Each engagement runs from strategy through shipped

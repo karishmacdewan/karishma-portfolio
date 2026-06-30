@@ -247,10 +247,10 @@ export default function HomePage() {
 const WORK = [
   {
     tag: "Agent",
-    year: "2025",
-    title: "A conversational companion for women's hormonal wellness.",
+    year: "2026",
+    title: "A conversational companion for Owne, my hormonal-health brand.",
     description:
-      "Interaction model, domain knowledge, and voice for a Series A wellness brand.",
+      "Retrieval, structured outputs, and safety guardrails, built end to end as founder.",
     preview:
       "radial-gradient(circle at 30% 40%, color-mix(in oklab, var(--accent) 80%, transparent), color-mix(in oklab, var(--accent) 30%, transparent) 45%, var(--color-grey-800) 85%)",
   },

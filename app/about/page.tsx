@@ -48,7 +48,7 @@ const NOISE_SVG =
 
 const NOW = [
   { label: "Currently in", value: "Brooklyn, NY" },
-  { label: "Building", value: "A women's hormonal wellness brand (in market)" },
+  { label: "Building", value: "Owne — a hormonal-health and Ayurvedic wellness brand (in market)" },
   { label: "Reading", value: "The Creative Act — Rick Rubin" },
   { label: "Listening to", value: "Alice Coltrane — Journey in Satchidananda" },
 ] as const;
@@ -348,10 +348,10 @@ function SectionFounding({ reduced }: ReducedProps) {
           variants={reduced ? undefined : slideRight}
           className="font-serif text-h3 text-foreground"
         >
-          In 2023, left to start a women&apos;s hormonal wellness brand.
-          Built it from first principles — research, brand, product,
-          early revenue. Still active as founder; the company is how I
-          keep my product instincts honest.
+          In 2023, left to start Owne, a hormonal-health and Ayurvedic
+          wellness brand. Built it from first principles — research,
+          brand, product, early revenue. Still active as founder; the
+          company is how I keep my product instincts honest.
         </motion.p>
       </motion.div>
     </section>

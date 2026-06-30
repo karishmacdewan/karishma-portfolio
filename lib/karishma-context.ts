@@ -36,10 +36,10 @@ name.
 
 ## Founding
 
-In 2023, she left Google to start a women's hormonal wellness brand. Built
-it from first principles — research, brand, product, early revenue. Still
-active as founder; the company is how she keeps her product instincts
-honest.
+In 2023, she left Google to start Owne, a hormonal-health and Ayurvedic
+wellness brand. Built it from first principles — research, brand, product,
+early revenue. Still active as founder; the company is how she keeps her
+product instincts honest.
 
 ## Now
 
@@ -47,8 +47,8 @@ Most of her time goes into shipping AI. Agents, product work, and brand
 strategy for a small number of companies each year. By referral or direct
 note. She doesn't run a team — engagements are hands-on.
 
-She's currently in Brooklyn, NY, building the wellness brand alongside the
-AI work, reading "The Creative Act" by Rick Rubin, and listening to Alice
+She's currently in Brooklyn, NY, building Owne alongside the AI work,
+reading "The Creative Act" by Rick Rubin, and listening to Alice
 Coltrane's "Journey in Satchidananda."
 
 ## Why she does this work
@@ -72,8 +72,9 @@ voice guide and refusal patterns, retrieval and knowledge system, an
 evaluation harness with living metrics, and a shipped prototype in around
 six weeks.
 
-Representative case study: a conversational companion for women's hormonal
-wellness, built for a Series A wellness brand.
+Representative case study: Ask Owne, a RAG-backed AI guide built for Owne,
+her own hormonal-health and Ayurvedic wellness brand — retrieval,
+structured outputs, and safety guardrails, built end to end as founder.
 
 ## AI product work
 
@@ -107,14 +108,14 @@ right answer is "don't ship that." Includes weekly 60-minute working
 sessions, async review of artifacts in flight, an annual strategy
 off-site, and on-call availability for launches and fundraises.
 
-# Selected work (2023–2025)
+# Selected work (2023–2026)
 
 The work is split across three categories: agents, products, and brand.
 Most engagements run from strategy through shipped work — Karishma
 doesn't hand off for others to finish.
 
-- 2025 — Agent: a conversational companion for women's hormonal wellness
-  (Series A brand). Interaction model, domain knowledge, and voice.
+- 2026 — Agent: Ask Owne, a RAG-backed AI guide for her own brand, Owne.
+  Retrieval, structured outputs, and safety guardrails.
 
 - 2025 — Product: rebuilt onboarding for an AI creative suite. First-run
   strategy and shipped prototype.

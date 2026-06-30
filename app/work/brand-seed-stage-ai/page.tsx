@@ -255,7 +255,7 @@ export default function BrandCaseStudy() {
           href="/work/agent-conversational-companion"
           className="group inline-flex items-baseline gap-4 font-serif text-h2 text-foreground hover:text-accent transition-colors duration-fast ease-out-soft"
         >
-          <span>A conversational companion for women&apos;s hormonal wellness.</span>
+          <span>A conversational companion for Owne, my hormonal-health brand.</span>
           <span
             aria-hidden="true"
             className="transition-transform duration-fast ease-out-soft group-hover:translate-x-1"

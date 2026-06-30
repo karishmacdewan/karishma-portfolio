@@ -3,9 +3,9 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title:
-    "A conversational companion for women's hormonal wellness — Karishma Dewan",
+    "A conversational companion for Owne, my hormonal-health brand — Karishma Dewan",
   description:
-    "Interaction model, domain knowledge, and voice for a Series A wellness brand.",
+    "Inside the build: retrieval, OpenAI structured outputs, safety guardrails, and the real bugs fixed shipping Owne's AI guide.",
 };
 
 /*
@@ -13,8 +13,8 @@ export const metadata: Metadata = {
  *
  * Body register: long-form narrative on a narrow measure (max-w-2xl),
  * interrupted twice by pull quotes. Serif body, slight line-height
- * lift for reading. No imagery — this one is about voice, so the
- * layout stays textual on purpose.
+ * lift for reading. No imagery — this one is about voice and
+ * architecture, so the layout stays textual on purpose.
  */
 
 export default function AgentCaseStudy() {
@@ -41,10 +41,10 @@ export default function AgentCaseStudy() {
           <span>
             <span className="text-accent">01</span> · Agent
           </span>
-          <span>2025</span>
+          <span>2026</span>
         </div>
         <h1 className="font-serif text-display">
-          A conversational companion for women&apos;s hormonal wellness.
+          A conversational companion for Owne, my hormonal-health brand.
         </h1>
       </header>
 
@@ -53,65 +53,104 @@ export default function AgentCaseStudy() {
           baked-in 1.6 — suits long-form serif on a dark page. */}
       <div className="max-w-2xl flex flex-col gap-8 font-serif text-body-lg text-foreground leading-[1.7]">
         <p>
-          The brief was simple and quietly hard: give the product a voice
-          that sounds like a calm friend with good information. Not a
-          doctor, not a chatbot, not a wellness influencer. Someone a
-          25-year-old figuring out her cycle for the first time could
-          actually keep talking to.
+          Owne is the hormonal-health and Ayurvedic wellness brand I started
+          in 2023. By this year it had a product line, a point of view, and
+          a recurring customer question that no FAQ page answers well:
+          &quot;is this normal?&quot; So I built Ask Owne — a RAG-backed AI
+          guide that lives directly in the storefront — to answer it with
+          something more specific than a generic wellness chatbot would
+          give.
         </p>
 
         <p>
-          Most conversational AI in the wellness category fails in the
-          same place. It over-validates — everything you feel is normal,
-          everything you ask is a great question — until the tone
-          dissolves into a kind of warm static. Users stop believing it.
-          The product gets reduced to a search engine with emoji.
+          The architecture is straightforward on paper: a Vercel serverless
+          function, OpenAI for embeddings and generation, Qdrant as the
+          vector store. Customer questions get embedded, matched against a
+          knowledge base split across a hormone-education reference and a
+          ritual-and-recipe library, and the closest matches get assembled
+          into a structured prompt. The model replies in OpenAI&apos;s
+          Structured Outputs format — a strict JSON schema with named
+          fields for the likely hormonal pattern, a food suggestion, a
+          movement suggestion, a product ritual, and a safety note —
+          rather than a single freeform string. That schema constraint did
+          more for response quality than any amount of prompt tweaking.
+          It&apos;s much easier to control where a product mention lands
+          when &quot;where the product goes&quot; is a field, not a hope.
         </p>
 
         {/* Pull quote — terracotta left rule, italic serif, h2 scale.
             Margin sits wider than the body to feel like a break, not
             just a quoted line. */}
         <blockquote className="my-6 py-2 pl-8 border-l-2 border-accent font-serif italic text-h2 text-foreground leading-[1.2]">
-          Tone isn&apos;t a wrapper. It&apos;s the product.
+          Self-harm and a missed period with cramping are both urgent. They
+          are not the same kind of urgent, and the system has to know
+          that.
         </blockquote>
 
         <p>
-          We rebuilt the agent from the interaction model out. First, a
-          sharper point of view on what the companion wouldn&apos;t do:
-          no diagnosis, no prescriptive advice, no cheerleading. Then a
-          voice guide — short sentences, grounded metaphors, willing to
-          say &quot;I don&apos;t know&quot; in the two or three contexts
-          where that answer is the honest one.
+          The riskiest part of any health-adjacent agent is escalation
+          logic, so that&apos;s where I spent the most care. A
+          deterministic moderation layer checks every message for
+          self-harm language before anything reaches the model; if it
+          fires, the response is forced into a support-redirect path, full
+          stop, no model discretion. Physical red-flag symptoms — heavy
+          bleeding, fainting, a missed period with a chance of pregnancy —
+          get a different path: full guidance, led by a prominent safety
+          note urging medical care. Early versions conflated the two
+          categories, which meant a question about dizziness got the same
+          crisis-redirect treatment as a question about hopelessness.
+          Separating them was a short prompt fix with an outsized effect on
+          whether the agent actually felt trustworthy.
         </p>
 
         <p>
-          Domain knowledge came next. The agent reads from a curated
-          knowledge base — clinical research abstracted into plain
-          language, reviewed by an OB-GYN on retainer. The retrieval
-          layer prioritises source weight, not recency; the system
-          prompt carries a short list of topics where it escalates to
-          &quot;please talk to your clinician&quot; rather than answer.
-        </p>
-
-        <p>
-          The hardest part was the waiting — the silences between user
-          messages where the old agent would fill with nudges. We took
-          those out. The companion waits. When it does speak, it earns
-          the line.
+          The bug that took longest to diagnose wasn&apos;t a bug in the
+          code — it was a bug in how retrieval ranks information.
+          Owne&apos;s actual point of difference is a dosha-and-agni
+          framework for thinking about hormonal symptoms, but it&apos;s
+          written abstractly, and vector search ranks by literal
+          similarity to whatever the user typed. A message about bloating
+          matches chunks about bloating, not the philosophical section
+          explaining why bloating matters in Ayurvedic terms. The result
+          was technically correct, brand-empty answers. The fix was to
+          stop trusting ranking for that one section: I built a
+          deterministic extractor that pulls the core Ayurveda framework
+          out of the knowledge base by heading and injects it into every
+          prompt, regardless of what retrieval surfaces.
         </p>
 
         <blockquote className="my-6 py-2 pl-8 border-l-2 border-accent font-serif italic text-h2 text-foreground leading-[1.2]">
-          The agent that respects a user&apos;s silence is the one they
-          come back to.
+          If the fact that makes your product yours isn&apos;t guaranteed
+          to show up, it isn&apos;t really part of your product.
         </blockquote>
 
         <p>
-          Six weeks from strategy to shipped. Retention on week-four
-          cohorts moved up noticeably; session length came down, which
-          was the goal. The best compliment came from a user who wrote
-          in to ask if a real person had written one of the responses.
-          The answer was no — and that the agent should feel that way
-          is, I think, the whole project.
+          Two smaller fixes mattered more than they should have. The
+          schema originally had two separate fields that could each name
+          the hero product, so it showed up twice in one reply — once near
+          the top, like an opening pitch. Collapsing that to a single
+          field, capped at one mention and moved to the end of the
+          response, fixed it immediately. Separately, the model would
+          occasionally name a specific recipe by title without saying how
+          to make it, traced to a name-only index table in the knowledge
+          base getting embedded as its own retrievable chunk, disconnected
+          from the chunk holding the real method. Excluding that index
+          from embedding, plus a hard rule — never name a recipe unless
+          the method comes with it — closed the gap.
+        </p>
+
+        <p>
+          The last piece was making it real for a non-technical merchant
+          workflow — mine. The chat lives in a Shopify theme section with
+          merchant-editable settings (API endpoint, greeting copy, example
+          prompts), because most days I&apos;m editing through
+          Shopify&apos;s browser-based code editor, not a terminal.
+          It&apos;s deployed on Vercel and live on the storefront now.
+          There&apos;s no clean before/after number to point to yet — it
+          just shipped. What I can point to is the architecture decisions
+          that made it worth shipping: a schema that controls itself, a
+          safety layer that doesn&apos;t guess, and a brand voice that
+          can&apos;t quietly disappear under retrieval ranking.
         </p>
       </div>
 

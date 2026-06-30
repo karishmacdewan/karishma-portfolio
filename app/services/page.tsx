@@ -34,7 +34,7 @@ const SERVICES: Service[] = [
       "Shipped prototype in six weeks",
     ],
     caseStudyTitle:
-      "A conversational companion for women's hormonal wellness.",
+      "A conversational companion for Owne, my hormonal-health brand.",
     caseStudyHref: "/work/agent-conversational-companion",
   },
   {

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -10,23 +11,50 @@ export const metadata: Metadata = {
 const APERTURE_URL = "https://aperture-teal-delta.vercel.app";
 
 /*
- * CASE STUDY — PRODUCT (essay-style, no imagery yet).
+ * CASE STUDY — PRODUCT (essay-style, with real screenshots).
  *
  * Same register as the Owne case study: long-form narrative on a narrow
- * measure, no plates. A "role / stack / scope" mono strip stands in for
- * a bullet list of highlights — it borrows Aperture's own homepage
- * convention (font-mono spec row) so the case study visually rhymes with
- * the product it's describing, rather than reading like a generic résumé
+ * measure. A "role / stack / scope" mono strip stands in for a bullet
+ * list of highlights — it borrows Aperture's own homepage convention
+ * (font-mono spec row) so the case study visually rhymes with the
+ * product it's describing, rather than reading like a generic résumé
  * dump.
  *
- * TODO(Karishma): drop in 2 real screenshots once captured —
- *   1. Homepage hero, dark mode (the proof card + headline).
- *   2. A run detail page: recommended-architecture panel + leaderboard
- *      (e.g. /runs/13ebe2a197d6) — this is the strongest "evidence" shot.
- * Insert as <figure> plates below the second/fourth paragraphs once the
- * files exist; this page intentionally ships text-only rather than with
- * placeholder boxes.
+ * Real screenshots, cropped to product chrome only (no browser frame):
+ * the homepage hero, then the recommended-architecture panel and the
+ * configuration leaderboard from a run detail page (/runs/13ebe2a197d6)
+ * — the strongest "evidence" pair. Plates break out wider than the prose
+ * measure (max-w-4xl vs max-w-2xl), the same contrast the
+ * product-onboarding page uses between text and imagery.
  */
+
+function Screenshot({
+  src,
+  alt,
+  caption,
+}: {
+  src: string;
+  alt: string;
+  caption: string;
+}) {
+  return (
+    <figure className="my-4 max-w-4xl">
+      <div className="overflow-hidden rounded-lg border border-border">
+        <Image
+          src={src}
+          alt={alt}
+          width={2940}
+          height={1602}
+          className="w-full h-auto"
+          sizes="(min-width: 1024px) 56rem, 100vw"
+        />
+      </div>
+      <figcaption className="mt-3 font-serif italic text-small text-muted">
+        {caption}
+      </figcaption>
+    </figure>
+  );
+}
 
 export default function ApertureCaseStudy() {
   return (
@@ -71,8 +99,8 @@ export default function ApertureCaseStudy() {
         </span>
       </div>
 
-      <div className="max-w-2xl flex flex-col gap-8 font-serif text-body-lg text-foreground leading-[1.7]">
-        <p>
+      <div className="flex flex-col gap-10 font-serif text-body-lg text-foreground leading-[1.7]">
+        <p className="max-w-2xl">
           Most AI teams spend months choosing a model and almost no time
           checking whether the information reaching it was processed well.
           Extraction, chunking, and embedding decisions quietly set a
@@ -80,7 +108,7 @@ export default function ApertureCaseStudy() {
           by habit or vendor demo, not evidence.
         </p>
 
-        <p>
+        <p className="max-w-2xl">
           Aperture runs a representative document corpus through the
           ingestion strategies a team is actually choosing between, scores
           each one on quality, cost, and runtime, and recommends the
@@ -88,11 +116,17 @@ export default function ApertureCaseStudy() {
           happened to ship first.
         </p>
 
-        <blockquote className="my-6 py-2 pl-8 border-l-2 border-accent font-serif italic text-h2 text-foreground leading-[1.2]">
+        <Screenshot
+          src="/work/aperture/hero.png"
+          alt="Aperture homepage in dark mode, showing the extract-chunk-enrich-embed-store pipeline and a last-run proof card scoring 87/100."
+          caption="Homepage, dark mode."
+        />
+
+        <blockquote className="max-w-2xl my-6 py-2 pl-8 border-l-2 border-accent font-serif italic text-h2 text-foreground leading-[1.2]">
           Better AI starts before the model.
         </blockquote>
 
-        <p>
+        <p className="max-w-2xl">
           The pipeline stays modular on purpose: extraction, chunking,
           metadata enrichment, embedding, and vector storage are
           independent, swappable stages. Each candidate is benchmarked
@@ -107,7 +141,19 @@ export default function ApertureCaseStudy() {
           or quietly dragging every score down equally.
         </p>
 
-        <p>
+        <Screenshot
+          src="/work/aperture/recommendation.png"
+          alt="Run detail page showing the recommended architecture: Native Text Extraction, Heading-Based Chunking, Rule-Based Metadata, OpenAI Small Embeddings, and Qdrant, scoring 87/100 with medium confidence."
+          caption="Run detail — recommended architecture, run 13ebe2a197d6."
+        />
+
+        <Screenshot
+          src="/work/aperture/leaderboard.png"
+          alt="Configuration leaderboard ranking every benchmarked ingestion stack by overall score, quality, runtime, cost, and confidence."
+          caption="The leaderboard behind the recommendation — every configuration actually run, ranked on evidence."
+        />
+
+        <p className="max-w-2xl">
           Built solo, end to end: the product strategy and interface, the
           FastAPI benchmarking backend, the scoring methodology, the
           Next.js frontend, and the deploy — a FastAPI service on a GCP

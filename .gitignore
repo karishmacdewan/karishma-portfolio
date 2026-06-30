@@ -42,3 +42,8 @@ next-env.d.ts
 
 # claude code — local per-project config
 /.claude/
+
+# stray raw screenshots dropped in app/ during case-study work — cropped
+# versions live in public/work/aperture/; delete these from Finder when convenient
+/app/work/aperture/Screenshot*.png
+/app/work/aperture/grid_check.png

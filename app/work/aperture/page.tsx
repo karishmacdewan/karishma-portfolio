@@ -8,24 +8,22 @@ import { useEffect } from "react";
 const APERTURE_URL = "https://aperture-teal-delta.vercel.app";
 
 /*
- * CASE STUDY — APERTURE (narrative redesign).
+ * CASE STUDY — APERTURE (editorial refinement pass).
  *
- * Rebuilt as a premium product case study, not documentation: one large
- * statement up front, a problem/insight/solution arc that shows instead
- * of explains, exactly two screenshots earning their place in "Product
- * highlights," scannable technical-decision cards, and a tight close.
- *
- * Structural choice: borrows About's vertical scroll-snap register
- * (min-h-screen snap-start snap-always sections, each with a distinct
- * entrance choreography) so the page has the momentum the old essay-style
- * version lacked. Diagrams are pure CSS/SVG, no images — they replace the
- * paragraphs the brief asked to cut. Reduced-motion disables snap and all
- * whileInView variants, same as About.
+ * Same 7-beat narrative as before, but tuned for visual rhythm rather
+ * than uniform weight: Hero and Insight are the two "loud" full-screen
+ * beats (the only sections that keep snap-start), everything else flows
+ * at normal density with padding scaled to how much weight that section
+ * should carry — Problem/Solution/Highlights medium, Technical compact,
+ * Outcome large again on the way out. Screenshots are sized down and
+ * treated as figures (image → small caption → explanation) rather than
+ * full-bleed inserts. The pipeline diagram now reads as a left-to-right
+ * flow that terminates in a Recommendation artifact, not five inert dots.
  */
 
 const EASE_OUT_SOFT: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-const PIPELINE_STAGES = ["Extract", "Chunk", "Enrich", "Embed", "Store"] as const;
+const PROCESS_STAGES = ["Extract", "Chunk", "Enrich", "Embed", "Store"] as const;
 
 const EVIDENCE_ROWS = [
   {
@@ -43,23 +41,28 @@ const EVIDENCE_ROWS = [
 const TECH_CARDS = [
   {
     label: "Architecture",
-    body: "Five independent, swappable stages — extraction, chunking, enrichment, embedding, storage. Any candidate can be replaced without rewriting the pipeline around it.",
+    takeaway: "Every stage is swappable.",
+    body: "Extraction, chunking, enrichment, embedding, and storage are independent — replace one without rewriting the rest of the pipeline.",
   },
   {
     label: "Benchmarking methodology",
-    body: "Every candidate runs against the same document corpus and is scored against an all-defaults baseline, not every possible combination — so results stay interpretable as the option count grows.",
+    takeaway: "Results stay interpretable as options grow.",
+    body: "Each candidate is scored against an all-defaults baseline, not every possible combination across stages.",
   },
   {
     label: "Deployment",
-    body: "FastAPI benchmarking service on a GCP Compute Engine VM behind Caddy. Next.js frontend on Vercel.",
+    takeaway: "Built to actually run.",
+    body: "FastAPI on a GCP Compute Engine VM behind Caddy; Next.js frontend on Vercel.",
   },
   {
     label: "Graceful degradation",
-    body: "Components missing credentials — Azure Document Intelligence, GPT-4o Vision — drop out as a flagged, excluded result instead of crashing the run or dragging every score down equally.",
+    takeaway: "Missing credentials don't break a run.",
+    body: "Components without access — Azure Document Intelligence, GPT-4o Vision — drop out as a flagged, excluded result instead of crashing or skewing every score equally.",
   },
   {
     label: "Scoring model",
-    body: "Quality, cost, and runtime combine into one score per configuration, with a confidence rating attached to the final recommendation.",
+    takeaway: "One score, with its confidence attached.",
+    body: "Quality, cost, and runtime combine into a single number per configuration, alongside a confidence rating on the final recommendation.",
   },
 ] as const;
 
@@ -119,21 +122,21 @@ function SectionLabel({
 
 function variantFade(reduced: boolean) {
   return {
-    hidden: reduced ? {} : { opacity: 0, y: 16 },
+    hidden: reduced ? {} : { opacity: 0, y: 14 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.65, ease: EASE_OUT_SOFT },
+      transition: { duration: 0.6, ease: EASE_OUT_SOFT },
     },
   };
 }
 
-const containerStagger = (stagger = 0.14, delay = 0.1) => ({
+const containerStagger = (stagger = 0.12, delay = 0.08) => ({
   hidden: {},
   visible: { transition: { staggerChildren: stagger, delayChildren: delay } },
 });
 
-/* ──────────────── 01 · Hero ──────────────── */
+/* ──────────────── 01 · Hero — loud ──────────────── */
 
 function SectionHero({ reduced }: ReducedProps) {
   const words = "Better AI starts before the model.".split(" ");
@@ -148,10 +151,10 @@ function SectionHero({ reduced }: ReducedProps) {
   };
 
   return (
-    <section className="min-h-screen snap-start snap-always relative mx-auto max-w-6xl w-full px-8 pt-32 pb-16 flex flex-col justify-center">
+    <section className="min-h-screen snap-start snap-always relative mx-auto max-w-6xl w-full px-8 pt-24 pb-12 flex flex-col justify-center">
       <Link
         href="/work"
-        className="group absolute left-8 top-10 inline-flex items-center gap-2 font-sans text-caption uppercase text-muted hover:text-foreground transition-colors duration-fast ease-out-soft"
+        className="group absolute left-8 top-8 inline-flex items-center gap-2 font-sans text-caption uppercase text-muted hover:text-foreground transition-colors duration-fast ease-out-soft"
       >
         <span
           aria-hidden="true"
@@ -162,7 +165,7 @@ function SectionHero({ reduced }: ReducedProps) {
         <span>Work</span>
       </Link>
 
-      <div className="flex items-center gap-8 font-sans text-caption uppercase text-muted mb-8">
+      <div className="flex items-center gap-8 font-sans text-caption uppercase text-muted mb-6">
         <span>
           <span className="text-accent">01</span> · Product
         </span>
@@ -190,7 +193,7 @@ function SectionHero({ reduced }: ReducedProps) {
         initial={reduced ? false : { opacity: 0, y: 12 }}
         animate={reduced ? undefined : { opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: EASE_OUT_SOFT, delay: 0.7 }}
-        className="font-serif text-h3 text-secondary mt-8 max-w-2xl"
+        className="font-serif text-h3 text-secondary mt-6 max-w-2xl"
       >
         Aperture benchmarks AI ingestion pipelines — extraction, chunking,
         embedding — on evidence instead of vendor demos.
@@ -200,7 +203,7 @@ function SectionHero({ reduced }: ReducedProps) {
         initial={reduced ? false : { opacity: 0, y: 12 }}
         animate={reduced ? undefined : { opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: EASE_OUT_SOFT, delay: 0.85 }}
-        className="mt-12 flex max-w-3xl flex-wrap gap-x-10 gap-y-2 border-t border-b border-border py-5 font-mono text-[11px] text-muted"
+        className="mt-8 flex max-w-3xl flex-wrap gap-x-10 gap-y-2 border-t border-b border-border py-4 font-mono text-[11px] text-muted"
       >
         <span>
           <span className="text-muted/60">role</span> solo — product, backend,
@@ -217,11 +220,11 @@ function SectionHero({ reduced }: ReducedProps) {
       </motion.div>
 
       <motion.figure
-        initial={reduced ? false : { opacity: 0, y: 24 }}
+        initial={reduced ? false : { opacity: 0, y: 22 }}
         whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.8, ease: EASE_OUT_SOFT, delay: 0.1 }}
-        className="mt-12"
+        className="mt-8 mx-auto w-full max-w-4xl"
       >
         <div className="overflow-hidden rounded-lg border border-border">
           <Image
@@ -231,27 +234,30 @@ function SectionHero({ reduced }: ReducedProps) {
             height={1602}
             priority
             className="w-full h-auto"
-            sizes="(min-width: 1024px) 72rem, 100vw"
+            sizes="(min-width: 1024px) 56rem, 100vw"
           />
         </div>
+        <figcaption className="mt-3 font-serif italic text-small text-muted">
+          Homepage, dark mode.
+        </figcaption>
       </motion.figure>
     </section>
   );
 }
 
-/* ──────────────── 02 · The problem ──────────────── */
+/* ──────────────── 02 · The problem — medium ──────────────── */
 
 function SectionProblem({ reduced }: ReducedProps) {
   const container = containerStagger();
   const fade = variantFade(reduced);
 
   return (
-    <section className="min-h-screen snap-start snap-always mx-auto max-w-6xl w-full px-8 pt-24 pb-16 flex flex-col justify-center">
+    <section className="mx-auto max-w-6xl w-full px-8 py-16">
       <SectionLabel
         index={2}
         name="The problem"
         reduced={reduced}
-        className="mb-10"
+        className="mb-6"
       />
 
       <motion.div
@@ -259,9 +265,9 @@ function SectionProblem({ reduced }: ReducedProps) {
         initial={reduced ? false : "hidden"}
         whileInView={reduced ? undefined : "visible"}
         viewport={{ once: true, amount: 0.4 }}
-        className="grid gap-12 md:grid-cols-[1.1fr_0.9fr] items-center"
+        className="grid gap-10 md:grid-cols-[1.1fr_0.9fr] items-center"
       >
-        <div className="flex flex-col gap-6 max-w-xl">
+        <div className="flex flex-col gap-5 max-w-xl">
           <motion.h2
             variants={fade}
             className="font-serif text-h2 text-foreground leading-[1.2]"
@@ -271,7 +277,7 @@ function SectionProblem({ reduced }: ReducedProps) {
           </motion.h2>
           <motion.p
             variants={fade}
-            className="font-serif text-body-lg text-secondary leading-[1.7]"
+            className="font-serif text-body-lg text-secondary leading-[1.65]"
           >
             Extraction, chunking, and embedding choices quietly set a
             ceiling on retrieval quality — and most teams pick them by
@@ -279,7 +285,7 @@ function SectionProblem({ reduced }: ReducedProps) {
           </motion.p>
         </div>
 
-        <motion.div variants={fade} className="flex flex-col gap-8">
+        <motion.div variants={fade} className="flex flex-col gap-6">
           {EVIDENCE_ROWS.map((row) => (
             <div key={row.label}>
               <div className="flex justify-between font-sans text-small text-muted mb-2">
@@ -306,12 +312,12 @@ function SectionProblem({ reduced }: ReducedProps) {
   );
 }
 
-/* ──────────────── 03 · The insight ──────────────── */
+/* ──────────────── 03 · The insight — the centrepiece ──────────────── */
 
 const INSIGHT_HALO = [
   "radial-gradient(circle closest-side at center,",
-  " color-mix(in oklab, var(--accent) 35%, transparent) 0%,",
-  " color-mix(in oklab, var(--accent) 15%, transparent) 35%,",
+  " color-mix(in oklab, var(--accent) 40%, transparent) 0%,",
+  " color-mix(in oklab, var(--accent) 18%, transparent) 35%,",
   " transparent 70%)",
 ].join("");
 
@@ -319,18 +325,18 @@ function SectionInsight({ reduced }: ReducedProps) {
   const haloAnim = reduced
     ? undefined
     : {
-        initial: { opacity: 0, scale: 0.9 },
-        whileInView: { opacity: 0.2, scale: 1 },
+        initial: { opacity: 0, scale: 0.88 },
+        whileInView: { opacity: 0.26, scale: 1 },
         viewport: { once: true, amount: 0.5 },
-        transition: { duration: 1.3, ease: EASE_OUT_SOFT },
+        transition: { duration: 1.4, ease: EASE_OUT_SOFT },
       };
   const quoteAnim = reduced
     ? undefined
     : {
-        initial: { opacity: 0, scale: 0.92 },
+        initial: { opacity: 0, scale: 0.9 },
         whileInView: { opacity: 1, scale: 1 },
         viewport: { once: true, amount: 0.5 },
-        transition: { duration: 1, ease: EASE_OUT_SOFT, delay: 0.1 },
+        transition: { duration: 1.1, ease: EASE_OUT_SOFT, delay: 0.15 },
       };
 
   return (
@@ -339,27 +345,27 @@ function SectionInsight({ reduced }: ReducedProps) {
         aria-hidden="true"
         {...(haloAnim ?? {})}
         className="pointer-events-none absolute inset-0 flex items-center justify-center"
-        style={reduced ? { opacity: 0.2 } : undefined}
+        style={reduced ? { opacity: 0.26 } : undefined}
       >
         <div
-          className="w-[min(80vw,80vh)] aspect-square"
+          className="w-[min(92vw,92vh)] aspect-square"
           style={{ backgroundImage: INSIGHT_HALO }}
         />
       </motion.div>
 
       <motion.div
         {...(quoteAnim ?? {})}
-        className="relative z-10 w-full max-w-[85vw] md:max-w-[55vw] mx-auto text-center"
+        className="relative z-10 w-full max-w-[90vw] md:max-w-[62vw] mx-auto text-center"
       >
-        <p className="font-sans text-caption uppercase text-muted mb-10">
+        <p className="font-sans text-caption uppercase text-muted mb-8">
           <span className="text-accent">03</span> · The insight
         </p>
         <blockquote>
-          <p className="font-serif italic text-h2 md:text-display text-foreground leading-[1.2]">
+          <p className="font-serif italic text-h1 md:text-hero text-foreground leading-[1.05] md:leading-[1.0]">
             A model can&apos;t retrieve what ingestion already lost.
           </p>
         </blockquote>
-        <p className="font-sans text-small text-muted mt-10 max-w-md mx-auto">
+        <p className="font-sans text-caption uppercase tracking-wide text-muted mt-14 max-w-sm mx-auto">
           Errors made at the first stage stay invisible — until they
           surface as a wrong answer three stages later.
         </p>
@@ -368,28 +374,36 @@ function SectionInsight({ reduced }: ReducedProps) {
   );
 }
 
-/* ──────────────── 04 · The solution ──────────────── */
+/* ──────────────── 04 · The solution — medium ──────────────── */
 
 function SectionSolution({ reduced }: ReducedProps) {
   const container = containerStagger();
   const fade = variantFade(reduced);
-  const nodeContainer = containerStagger(0.1, 0.2);
+  const nodeContainer = containerStagger(0.09, 0.15);
   const node = {
     hidden: reduced ? {} : { opacity: 0, scale: 0.7 },
     visible: {
       opacity: 1,
       scale: 1,
-      transition: { duration: 0.5, ease: EASE_OUT_SOFT },
+      transition: { duration: 0.45, ease: EASE_OUT_SOFT },
+    },
+  };
+  const arrow = {
+    hidden: reduced ? {} : { opacity: 0, x: -6 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.35, ease: EASE_OUT_SOFT },
     },
   };
 
   return (
-    <section className="min-h-screen snap-start snap-always mx-auto max-w-6xl w-full px-8 pt-24 pb-16 flex flex-col justify-center">
+    <section className="mx-auto max-w-6xl w-full px-8 py-16">
       <SectionLabel
         index={4}
         name="The solution"
         reduced={reduced}
-        className="mb-10"
+        className="mb-6"
       />
 
       <motion.div
@@ -397,7 +411,7 @@ function SectionSolution({ reduced }: ReducedProps) {
         initial={reduced ? false : "hidden"}
         whileInView={reduced ? undefined : "visible"}
         viewport={{ once: true, amount: 0.4 }}
-        className="flex flex-col gap-16"
+        className="flex flex-col gap-10"
       >
         <motion.h2
           variants={fade}
@@ -406,35 +420,53 @@ function SectionSolution({ reduced }: ReducedProps) {
           Five independent stages. One scored recommendation.
         </motion.h2>
 
+        {/* Pipeline flow — process stages on the left, connected by
+            chevron arrows that read as motion rather than static dots,
+            terminating in a visually distinct Recommendation artifact. */}
         <motion.div
           variants={reduced ? undefined : nodeContainer}
           initial={reduced ? false : "hidden"}
           whileInView={reduced ? undefined : "visible"}
           viewport={{ once: true, amount: 0.5 }}
-          className="flex items-center w-full max-w-4xl"
-          aria-label="Pipeline stages: extract, chunk, enrich, embed, store"
+          className="flex items-center w-full overflow-x-auto pb-2"
+          aria-label="Pipeline: extract, chunk, enrich, embed, store, then a scored recommendation"
         >
-          {PIPELINE_STAGES.map((stage, i) => (
-            <div key={stage} className="flex items-center flex-1 last:flex-none">
+          {PROCESS_STAGES.map((stage) => (
+            <div key={stage} className="flex items-center shrink-0">
               <motion.div
                 variants={reduced ? undefined : node}
-                className="flex flex-col items-center gap-3 shrink-0"
+                className="flex flex-col items-center gap-2.5 shrink-0"
               >
-                <div className="w-3 h-3 rounded-full bg-accent" />
-                <span className="font-mono text-[11px] uppercase tracking-wide text-muted">
+                <div className="w-2.5 h-2.5 rounded-full bg-muted" />
+                <span className="font-mono text-[11px] uppercase tracking-wide text-muted whitespace-nowrap">
                   {stage}
                 </span>
               </motion.div>
-              {i < PIPELINE_STAGES.length - 1 && (
-                <div className="flex-1 h-px bg-border mx-3" />
-              )}
+              <motion.span
+                variants={reduced ? undefined : arrow}
+                aria-hidden="true"
+                className="mx-3 sm:mx-5 text-muted/50 font-mono text-sm shrink-0"
+              >
+                →
+              </motion.span>
             </div>
           ))}
+
+          <motion.div
+            variants={reduced ? undefined : node}
+            className="flex flex-col items-center gap-2.5 shrink-0"
+          >
+            <div className="rounded-full bg-accent px-4 py-1.5">
+              <span className="font-mono text-[11px] uppercase tracking-wide text-background whitespace-nowrap">
+                Recommendation
+              </span>
+            </div>
+          </motion.div>
         </motion.div>
 
         <motion.p
           variants={fade}
-          className="font-serif text-body-lg text-secondary leading-[1.7] max-w-2xl"
+          className="font-serif text-body-lg text-secondary leading-[1.65] max-w-2xl"
         >
           Every candidate runs against the same document corpus and is
           scored against an all-defaults baseline — not every possible
@@ -446,150 +478,116 @@ function SectionSolution({ reduced }: ReducedProps) {
   );
 }
 
-/* ──────────────── 05 · Product highlights ──────────────── */
+/* ──────────────── 05 · Product highlights — editorial figures ──────────────── */
 
-function HighlightShot({
-  eyebrow,
-  heading,
+function HighlightFigure({
+  figureNumber,
+  caption,
   body,
   src,
   alt,
   reduced,
-  fromLeft,
+  align,
 }: {
-  eyebrow: string;
-  heading: string;
+  figureNumber: string;
+  caption: string;
   body: string;
   src: string;
   alt: string;
   reduced: boolean;
-  fromLeft: boolean;
+  align: "left" | "right";
 }) {
-  const textVariant = {
-    hidden: reduced ? {} : { opacity: 0, x: fromLeft ? -32 : 32 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.7, ease: EASE_OUT_SOFT },
-    },
-  };
-  const shotVariant = {
-    hidden: reduced ? {} : { opacity: 0, x: fromLeft ? 32 : -32 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.7, ease: EASE_OUT_SOFT },
-    },
-  };
-  const container = containerStagger(0.14, 0.05);
+  const container = containerStagger(0.12, 0.05);
+  const fade = variantFade(reduced);
 
-  const text = (
-    <motion.div
-      variants={reduced ? undefined : textVariant}
-      className="flex flex-col gap-3 max-w-xs shrink-0"
-    >
-      <p className="font-sans text-caption uppercase text-accent">
-        {eyebrow}
-      </p>
-      <h3 className="font-serif text-h3 text-foreground leading-[1.25]">
-        {heading}
-      </h3>
-      <p className="font-sans text-small text-secondary leading-[1.6]">
-        {body}
-      </p>
-    </motion.div>
-  );
-
-  const shot = (
+  return (
     <motion.figure
-      variants={reduced ? undefined : shotVariant}
-      className="flex-1 min-w-0"
+      variants={reduced ? undefined : container}
+      initial={reduced ? false : "hidden"}
+      whileInView={reduced ? undefined : "visible"}
+      viewport={{ once: true, amount: 0.3 }}
+      className="flex flex-col"
     >
-      <div className="overflow-hidden rounded-lg border border-border">
+      <motion.div
+        variants={fade}
+        className="mx-auto w-full max-w-3xl overflow-hidden rounded-lg border border-border"
+      >
         <Image
           src={src}
           alt={alt}
           width={2940}
           height={1602}
           className="w-full h-auto"
-          sizes="(min-width: 1024px) 56rem, 100vw"
+          sizes="(min-width: 1024px) 48rem, 100vw"
         />
-      </div>
-    </motion.figure>
-  );
+      </motion.div>
 
-  return (
-    <motion.div
-      variants={reduced ? undefined : container}
-      initial={reduced ? false : "hidden"}
-      whileInView={reduced ? undefined : "visible"}
-      viewport={{ once: true, amount: 0.35 }}
-      className="flex flex-col md:flex-row gap-8 md:gap-12 items-center"
-    >
-      {fromLeft ? (
-        <>
-          {text}
-          {shot}
-        </>
-      ) : (
-        <>
-          {shot}
-          {text}
-        </>
-      )}
-    </motion.div>
+      <motion.figcaption
+        variants={fade}
+        className={`mt-5 max-w-md flex flex-col gap-2 ${
+          align === "right" ? "ml-auto text-left" : "mr-auto"
+        }`}
+      >
+        <p className="font-mono text-[11px] uppercase tracking-wide text-muted">
+          <span className="text-accent">{figureNumber}</span> — {caption}
+        </p>
+        <p className="font-serif text-body text-secondary leading-[1.6]">
+          {body}
+        </p>
+      </motion.figcaption>
+    </motion.figure>
   );
 }
 
 function SectionHighlights({ reduced }: ReducedProps) {
   return (
-    <section className="min-h-screen snap-start snap-always mx-auto max-w-6xl w-full px-8 pt-24 pb-16 flex flex-col justify-center gap-16">
+    <section className="mx-auto max-w-6xl w-full px-8 py-16 flex flex-col gap-14">
       <SectionLabel index={5} name="Product highlights" reduced={reduced} />
 
-      <HighlightShot
-        eyebrow="The recommendation"
-        heading="Commits to one answer."
-        body="Aperture doesn't just rank configurations — it recommends one, with a confidence score attached, not a spreadsheet to interpret."
+      <HighlightFigure
+        figureNumber="Fig. 01"
+        caption="The recommendation."
+        body="Aperture doesn't just rank configurations — it commits to one, with a confidence score attached, not a spreadsheet to interpret."
         src="/work/aperture/recommendation.png"
         alt="Run detail page showing the recommended architecture: Native Text Extraction, Heading-Based Chunking, Rule-Based Metadata, OpenAI Small Embeddings, and Qdrant, scoring 87/100 with medium confidence."
         reduced={reduced}
-        fromLeft={true}
+        align="left"
       />
 
-      <HighlightShot
-        eyebrow="The evidence"
-        heading="Nothing fabricated, nothing assumed."
-        body="Every configuration actually run, ranked on quality, cost, and runtime — the leaderboard behind the recommendation."
+      <HighlightFigure
+        figureNumber="Fig. 02"
+        caption="The evidence behind it."
+        body="Every configuration actually run, ranked on quality, cost, and runtime — nothing fabricated, nothing assumed."
         src="/work/aperture/leaderboard.png"
         alt="Configuration leaderboard ranking every benchmarked ingestion stack by overall score, quality, runtime, cost, and confidence."
         reduced={reduced}
-        fromLeft={false}
+        align="right"
       />
     </section>
   );
 }
 
-/* ──────────────── 06 · Technical decisions ──────────────── */
+/* ──────────────── 06 · Technical decisions — compact ──────────────── */
 
 function SectionTechnical({ reduced }: ReducedProps) {
-  const container = containerStagger(0.08, 0.1);
+  const container = containerStagger(0.07, 0.08);
   const fade = variantFade(reduced);
   const card = {
-    hidden: reduced ? {} : { opacity: 0, y: 16 },
+    hidden: reduced ? {} : { opacity: 0, y: 14 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.55, ease: EASE_OUT_SOFT },
+      transition: { duration: 0.5, ease: EASE_OUT_SOFT },
     },
   };
 
   return (
-    <section className="min-h-screen snap-start snap-always mx-auto max-w-6xl w-full px-8 pt-24 pb-16 flex flex-col justify-center">
+    <section className="mx-auto max-w-6xl w-full px-8 py-14">
       <SectionLabel
         index={6}
         name="Technical decisions"
         reduced={reduced}
-        className="mb-10"
+        className="mb-5"
       />
 
       <motion.div
@@ -600,7 +598,7 @@ function SectionTechnical({ reduced }: ReducedProps) {
       >
         <motion.h2
           variants={fade}
-          className="font-serif text-h2 text-foreground leading-[1.2] max-w-2xl mb-10"
+          className="font-serif text-h2 text-foreground leading-[1.2] max-w-2xl mb-7"
         >
           Decisions that hold up under inspection.
         </motion.h2>
@@ -610,12 +608,15 @@ function SectionTechnical({ reduced }: ReducedProps) {
             <motion.div
               key={c.label}
               variants={card}
-              className="bg-background p-6 flex flex-col gap-3"
+              className="bg-background p-5 flex flex-col gap-1.5"
             >
-              <p className="font-sans text-caption uppercase text-accent">
+              <p className="font-sans text-caption uppercase text-accent mb-1">
                 {c.label}
               </p>
-              <p className="font-sans text-small text-secondary leading-[1.6]">
+              <p className="font-sans text-body font-medium text-foreground leading-[1.4]">
+                {c.takeaway}
+              </p>
+              <p className="font-sans text-small text-secondary leading-[1.55]">
                 {c.body}
               </p>
             </motion.div>
@@ -626,19 +627,19 @@ function SectionTechnical({ reduced }: ReducedProps) {
   );
 }
 
-/* ──────────────── 07 · Outcome ──────────────── */
+/* ──────────────── 07 · Outcome — large again on the way out ──────────────── */
 
 function SectionOutcome({ reduced }: ReducedProps) {
   const container = containerStagger();
   const fade = variantFade(reduced);
 
   return (
-    <section className="min-h-screen snap-start snap-always mx-auto max-w-6xl w-full px-8 pt-24 pb-20 flex flex-col justify-center">
+    <section className="mx-auto max-w-6xl w-full px-8 py-24">
       <SectionLabel
         index={7}
         name="Outcome"
         reduced={reduced}
-        className="mb-10"
+        className="mb-7"
       />
 
       <motion.div
@@ -646,23 +647,23 @@ function SectionOutcome({ reduced }: ReducedProps) {
         initial={reduced ? false : "hidden"}
         whileInView={reduced ? undefined : "visible"}
         viewport={{ once: true, amount: 0.4 }}
-        className="flex flex-col gap-8 max-w-2xl"
+        className="flex flex-col gap-6 max-w-3xl"
       >
         <motion.h2
           variants={fade}
-          className="font-serif text-h2 text-foreground leading-[1.2]"
+          className="font-serif text-h1 text-foreground leading-[1.15]"
         >
-          Designed, engineered, and deployed — solo.
+          It&apos;s live — and the leaderboard it produces is the evidence
+          most teams skip on their way to picking a model.
         </motion.h2>
 
         <motion.p
           variants={fade}
-          className="font-serif text-body-lg text-secondary leading-[1.7]"
+          className="font-sans text-small text-muted leading-[1.6] max-w-xl"
         >
-          Product strategy, interface, FastAPI benchmarking backend,
-          scoring methodology, Next.js frontend, deploy. Aperture is live,
-          and the leaderboard it produces is the evidence most teams skip
-          on their way to picking a model.
+          Designed, engineered, and deployed solo: product strategy,
+          interface, FastAPI benchmarking backend, scoring methodology,
+          Next.js frontend, and the deploy itself.
         </motion.p>
 
         <motion.div variants={fade}>
@@ -670,7 +671,7 @@ function SectionOutcome({ reduced }: ReducedProps) {
             href={APERTURE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex w-fit items-center gap-3 mt-2 rounded-full border border-border px-6 py-3 font-sans text-small text-foreground hover:border-accent hover:text-accent transition-colors duration-fast ease-out-soft"
+            className="group inline-flex w-fit items-center gap-3 mt-4 rounded-full border border-border px-6 py-3 font-sans text-small text-foreground hover:border-accent hover:text-accent transition-colors duration-fast ease-out-soft"
           >
             <span>Visit Aperture</span>
             <span
@@ -684,7 +685,7 @@ function SectionOutcome({ reduced }: ReducedProps) {
 
         <motion.footer
           variants={fade}
-          className="mt-16 border-t border-border pt-10"
+          className="mt-14 border-t border-border pt-8"
         >
           <p className="font-sans text-caption uppercase text-muted mb-4">
             Next project

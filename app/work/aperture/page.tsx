@@ -71,8 +71,14 @@ export default function ApertureCaseStudy() {
 
   useEffect(() => {
     if (reduced) return;
+    // Proximity, not mandatory: only Hero and Insight declare snap
+    // points on this page. Mandatory snap requires the scroll position
+    // to always rest on *a* snap point, which — with no snap point
+    // anywhere after Insight — traps scrolling there. Proximity snaps
+    // near a declared point without blocking scroll past sections that
+    // don't have one.
     const html = document.documentElement;
-    html.setAttribute("data-scroll-snap", "y-mandatory");
+    html.setAttribute("data-scroll-snap", "y-proximity");
     return () => {
       html.removeAttribute("data-scroll-snap");
     };

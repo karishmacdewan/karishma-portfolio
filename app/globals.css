@@ -157,3 +157,18 @@ html[data-scroll-snap="y-mandatory"] {
      section's snap target. */
   scroll-padding-top: 0px;
 }
+
+/*
+ * y-proximity — for routes where only SOME sections are snap points
+ * (e.g. app/work/aperture, which snaps just its Hero and Insight
+ * beats and lets everything else flow normally). `mandatory` requires
+ * the scroll position to always rest on *a* snap point; with snap
+ * points covering only part of the page that traps scrolling at the
+ * last one. `proximity` only snaps when scroll comes to rest near a
+ * snap point and never blocks scrolling past sections that don't
+ * declare one.
+ */
+html[data-scroll-snap="y-proximity"] {
+  scroll-snap-type: y proximity;
+  scroll-padding-top: 0px;
+}
